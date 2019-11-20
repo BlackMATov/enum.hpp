@@ -15,8 +15,6 @@
 #include <boost/preprocessor/seq/size.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 
-#include <boost/preprocessor/stringize.hpp>
-
 namespace enum_hpp
 {
     class exception final : public std::runtime_error {
@@ -41,15 +39,23 @@ namespace enum_hpp::detail
         }
     };
 
+    constexpr bool is_end_of_name(char ch) noexcept {
+        switch ( ch ) {
+            case ' ':
+            case '=':
+            case '\r':
+            case '\n':
+            case '\t':
+                return true;
+            default:
+                return false;
+        }
+    }
+
     constexpr std::string_view trim_raw_name(std::string_view raw_name) noexcept {
         for ( std::size_t i = 0; i < raw_name.size(); ++i ) {
-            switch ( raw_name[i] ) {
-                case ' ':
-                case '=':
-                case '\r':
-                case '\n':
-                case '\t':
-                    return raw_name.substr(0, i);
+            if ( is_end_of_name(raw_name[i]) ) {
+                return raw_name.substr(0, i);
             }
         }
         return raw_name;
@@ -81,7 +87,7 @@ namespace enum_hpp::detail
 //
 
 #define ENUM_HPP_GENERATE_NAMES_OP(r, d, x)\
-    ::enum_hpp::detail::trim_raw_name(BOOST_PP_STRINGIZE(x)),
+    ::enum_hpp::detail::trim_raw_name(ENUM_HPP_PP_STRINGIZE(x)),
 
 #define ENUM_HPP_GENERATE_NAMES(Fields)\
     BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_NAMES_OP, _, Fields)
@@ -130,3 +136,12 @@ namespace enum_hpp::detail
             return false;\
         }\
     };
+
+// -----------------------------------------------------------------------------
+//
+// ENUM_HPP_PP
+//
+// -----------------------------------------------------------------------------
+
+#define ENUM_HPP_PP_STRINGIZE(x) ENUM_HPP_PP_STRINGIZE_I(x)
+#define ENUM_HPP_PP_STRINGIZE_I(x) #x
