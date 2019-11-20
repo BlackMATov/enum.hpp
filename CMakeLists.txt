@@ -7,9 +7,11 @@ endif()
 
 project(enum.hpp)
 
+find_package(Boost REQUIRED)
+
 add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE headers)
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
+target_include_directories(${PROJECT_NAME} INTERFACE headers ${Boost_INCLUDE_DIRS})
 
 if(BUILD_AS_STANDALONE)
     option(BUILD_WITH_UNTESTS "Build with unit tests" ON)

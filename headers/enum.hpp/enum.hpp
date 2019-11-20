@@ -11,6 +11,12 @@
 #include <stdexcept>
 #include <string_view>
 
+#include <boost/preprocessor/seq/seq.hpp>
+#include <boost/preprocessor/seq/size.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+
+#include <boost/preprocessor/stringize.hpp>
+
 namespace enum_hpp
 {
     class exception final : public std::runtime_error {
@@ -20,31 +26,58 @@ namespace enum_hpp
     };
 }
 
-//
-// ENUM_HPP_GENERATE_INTERNAL_NAMES
-//
+namespace enum_hpp::detail
+{
+    template < typename Enum >
+    struct ignore_assign {
+        Enum value;
 
-#define ENUM_HPP_GENERATE_INTERNAL_NAMES(Fields)
+        constexpr explicit ignore_assign(Enum value) noexcept
+        : value(value) {}
+
+        template < typename Other >
+        constexpr const ignore_assign& operator=(Other) const noexcept {
+            return *this;
+        }
+    };
+
+    constexpr std::string_view trim_raw_name(std::string_view raw_name) noexcept {
+        const auto end_index = raw_name.find_first_of(" =\r\n\t");
+        return end_index == std::string_view::npos
+            ? raw_name
+            : raw_name.substr(0, end_index);
+    }
+}
 
 //
 // ENUM_HPP_GENERATE_ENUM_FIELDS
 //
 
-#define ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)
+#define ENUM_HPP_GENERATE_ENUM_FIELDS_OP(r, d, x)\
+    x,
+
+#define ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
+    BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_ENUM_FIELDS_OP, _, Fields)
 
 //
 // ENUM_HPP_GENERATE_VALUES
 //
 
+#define ENUM_HPP_GENERATE_VALUES_OP(r, Enum, x)\
+    ((::enum_hpp::detail::ignore_assign<Enum>)Enum::x).value,
+
 #define ENUM_HPP_GENERATE_VALUES(Enum, Fields)\
-    Enum(0),
+    BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_VALUES_OP, Enum, Fields)
 
 //
 // ENUM_HPP_GENERATE_NAMES
 //
 
+#define ENUM_HPP_GENERATE_NAMES_OP(r, d, x)\
+    ::enum_hpp::detail::trim_raw_name(BOOST_PP_STRINGIZE(x)),
+
 #define ENUM_HPP_GENERATE_NAMES(Fields)\
-    "",
+    BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_NAMES_OP, _, Fields)
 
 //
 // ENUM_HPP_ENUM_CLASS
@@ -56,10 +89,10 @@ namespace enum_hpp
     };\
     struct Enum##_traits {\
     private:\
-        enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_INTERNAL_NAMES(Fields) };\
+        enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
     public:\
-        static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
-        static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) }; \
+        static constexpr std::size_t size = BOOST_PP_SEQ_SIZE(Fields);\
+        static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) };\
         static constexpr const std::string_view names[] = { ENUM_HPP_GENERATE_NAMES(Fields) };\
     public:\
         static constexpr std::string_view to_string(Enum e) noexcept {\
@@ -90,57 +123,3 @@ namespace enum_hpp
             return false;\
         }\
     };
-
-// -----------------------------------------------------------------------------
-//
-// ENUM_HPP_PP
-//
-// -----------------------------------------------------------------------------
-
-//
-// ENUM_HPP_PP_CAT
-//
-
-#define ENUM_HPP_PP_CAT(x, y) ENUM_HPP_PP_CAT_I(x, y)
-#define ENUM_HPP_PP_CAT_I(x, y) x ## y
-
-//
-// ENUM_HPP_PP_APPLY
-//
-
-#define ENUM_HPP_PP_APPLY(m, ...)\
-    m(__VA_ARGS__)
-
-//
-// ENUM_HPP_PP_SEQ_HEAD
-//
-
-#define ENUM_HPP_PP_SEQ_HEAD(Seq) ENUM_HPP_PP_SEQ_HEAD_I(ENUM_HPP_PP_SEQ_HEAD_II Seq)
-#define ENUM_HPP_PP_SEQ_HEAD_I(x) ENUM_HPP_PP_SEQ_HEAD_III(x)
-#define ENUM_HPP_PP_SEQ_HEAD_II(x) x, ENUM_HPP_PP_SEQ_NOTHING
-#define ENUM_HPP_PP_SEQ_HEAD_III(x, _) x
-
-//
-// ENUM_HPP_PP_SEQ_TAIL
-//
-
-#define ENUM_HPP_PP_SEQ_TAIL(Seq) ENUM_HPP_PP_SEQ_TAIL_I Seq
-#define ENUM_HPP_PP_SEQ_TAIL_I(_)
-
-//
-// ENUM_HPP_PP_SEQ_SIZE
-//
-
-#define ENUM_HPP_PP_SEQ_SIZE(Seq)\
-    ENUM_HPP_PP_CAT(ENUM_HPP_PP_SEQ_SIZE_, ENUM_HPP_PP_SEQ_SIZE_0 Seq)
-
-#define ENUM_HPP_PP_SEQ_SIZE_0(_) ENUM_HPP_PP_SEQ_SIZE_1
-#define ENUM_HPP_PP_SEQ_SIZE_1(_) ENUM_HPP_PP_SEQ_SIZE_2
-#define ENUM_HPP_PP_SEQ_SIZE_2(_) ENUM_HPP_PP_SEQ_SIZE_3
-#define ENUM_HPP_PP_SEQ_SIZE_3(_) ENUM_HPP_PP_SEQ_SIZE_4
-
-#define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_0 0
-#define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_1 1
-#define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_2 2
-#define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_3 3
-#define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_4 4
