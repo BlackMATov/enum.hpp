@@ -11,8 +11,6 @@
 #include <stdexcept>
 #include <string_view>
 
-#include <boost/preprocessor/seq/seq.hpp>
-#include <boost/preprocessor/seq/size.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 
 namespace enum_hpp
@@ -104,7 +102,7 @@ namespace enum_hpp::detail
     private:\
         enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
     public:\
-        static constexpr std::size_t size = BOOST_PP_SEQ_SIZE(Fields);\
+        static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
         static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) };\
         static constexpr const std::string_view names[] = { ENUM_HPP_GENERATE_NAMES(Fields) };\
     public:\
@@ -143,5 +141,36 @@ namespace enum_hpp::detail
 //
 // -----------------------------------------------------------------------------
 
+//
+// ENUM_HPP_PP_CAT
+//
+
+#define ENUM_HPP_PP_CAT(x, y) ENUM_HPP_PP_CAT_I(x, y)
+#define ENUM_HPP_PP_CAT_I(x, y) x ## y
+
+//
+// ENUM_HPP_PP_STRINGIZE
+//
+
 #define ENUM_HPP_PP_STRINGIZE(x) ENUM_HPP_PP_STRINGIZE_I(x)
 #define ENUM_HPP_PP_STRINGIZE_I(x) #x
+
+//
+// ENUM_HPP_PP_SEQ_SIZE
+//
+
+#define ENUM_HPP_PP_SEQ_SIZE(seq)\
+    ENUM_HPP_PP_CAT(ENUM_HPP_PP_SEQ_SIZE_, ENUM_HPP_PP_SEQ_SIZE_0 seq)
+
+#define ENUM_HPP_PP_SEQ_SIZE_0(_) ENUM_HPP_PP_SEQ_SIZE_1
+#define ENUM_HPP_PP_SEQ_SIZE_1(_) ENUM_HPP_PP_SEQ_SIZE_2
+#define ENUM_HPP_PP_SEQ_SIZE_2(_) ENUM_HPP_PP_SEQ_SIZE_3
+#define ENUM_HPP_PP_SEQ_SIZE_3(_) ENUM_HPP_PP_SEQ_SIZE_4
+#define ENUM_HPP_PP_SEQ_SIZE_4(_) ENUM_HPP_PP_SEQ_SIZE_5
+
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_0 0
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_1 1
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_2 2
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_3 3
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_4 4
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_5 5
