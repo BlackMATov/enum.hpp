@@ -42,10 +42,17 @@ namespace enum_hpp::detail
     };
 
     constexpr std::string_view trim_raw_name(std::string_view raw_name) noexcept {
-        const auto end_index = raw_name.find_first_of(" =\r\n\t");
-        return end_index == std::string_view::npos
-            ? raw_name
-            : raw_name.substr(0, end_index);
+        for ( std::size_t i = 0; i < raw_name.size(); ++i ) {
+            switch ( raw_name[i] ) {
+                case ' ':
+                case '=':
+                case '\r':
+                case '\n':
+                case '\t':
+                    return raw_name.substr(0, i);
+            }
+        }
+        return raw_name;
     }
 }
 
