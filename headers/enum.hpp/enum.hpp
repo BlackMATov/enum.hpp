@@ -158,6 +158,18 @@ namespace enum_hpp::detail
             }\
             return std::nullopt;\
         }\
+        static constexpr Enum from_string_or_default(std::string_view name, Enum def) noexcept {\
+            if ( auto e = from_string(name) ) {\
+                return *e;\
+            }\
+            return def;\
+        }\
+        static Enum from_string_or_throw(std::string_view name) {\
+            if ( auto e = from_string(name) ) {\
+                return *e;\
+            }\
+            throw ::enum_hpp::exception(#Enum "_traits::from_string_or_throw(): invalid argument");\
+        }\
         \
         static constexpr std::optional<std::size_t> to_index(Enum e) noexcept {\
             for ( std::size_t i = 0; i < size; ++i ) {\
@@ -186,6 +198,18 @@ namespace enum_hpp::detail
                 return values[index];\
             }\
             return std::nullopt;\
+        }\
+        static constexpr Enum from_index_or_default(std::size_t index, Enum def) noexcept {\
+            if ( auto e = from_index(index) ) {\
+                return *e;\
+            }\
+            return def;\
+        }\
+        static Enum from_index_or_throw(std::size_t index) {\
+            if ( auto e = from_index(index) ) {\
+                return *e;\
+            }\
+            throw ::enum_hpp::exception(#Enum "_traits::from_index_or_throw(): invalid argument");\
         }\
     };
 

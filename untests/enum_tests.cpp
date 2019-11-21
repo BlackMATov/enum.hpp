@@ -186,7 +186,18 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::color_traits::from_string("red") == sn::color::red);
             STATIC_REQUIRE(sn::color_traits::from_string("green") == sn::color::green);
             STATIC_REQUIRE(sn::color_traits::from_string("blue") == sn::color::blue);
+
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("red", sn::color::green) == sn::color::red);
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("green", sn::color::red) == sn::color::green);
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("blue", sn::color::red) == sn::color::blue);
+
+            REQUIRE(sn::color_traits::from_string_or_throw("red") == sn::color::red);
+            REQUIRE(sn::color_traits::from_string_or_throw("green") == sn::color::green);
+            REQUIRE(sn::color_traits::from_string_or_throw("blue") == sn::color::blue);
+
             STATIC_REQUIRE_FALSE(sn::color_traits::from_string("42"));
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("42", sn::color::red) == sn::color::red);
+            REQUIRE_THROWS_AS(sn::color_traits::from_string_or_throw("42"), enum_hpp::exception);
         }
         {
             STATIC_REQUIRE(sn::render::mask_traits::from_string("none") == sn::render::mask::none);
@@ -260,7 +271,18 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::color_traits::from_index(0) == sn::color::red);
             STATIC_REQUIRE(sn::color_traits::from_index(1) == sn::color::green);
             STATIC_REQUIRE(sn::color_traits::from_index(2) == sn::color::blue);
+
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(0, sn::color::green) == sn::color::red);
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(1, sn::color::red) == sn::color::green);
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(2, sn::color::red) == sn::color::blue);
+
+            REQUIRE(sn::color_traits::from_index_or_throw(0) == sn::color::red);
+            REQUIRE(sn::color_traits::from_index_or_throw(1) == sn::color::green);
+            REQUIRE(sn::color_traits::from_index_or_throw(2) == sn::color::blue);
+
             STATIC_REQUIRE_FALSE(sn::color_traits::from_index(42));
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(42, sn::color::red) == sn::color::red);
+            REQUIRE_THROWS_AS(sn::color_traits::from_index_or_throw(42), enum_hpp::exception);
         }
         {
             STATIC_REQUIRE(sn::render::mask_traits::from_index(0) == sn::render::mask::none);
