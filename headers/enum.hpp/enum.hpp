@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <string_view>
 
-#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/seq.hpp>
 
 namespace enum_hpp
 {
@@ -64,31 +64,31 @@ namespace enum_hpp::detail
 // ENUM_HPP_GENERATE_ENUM_FIELDS
 //
 
-#define ENUM_HPP_GENERATE_ENUM_FIELDS_OP(r, d, x)\
+#define ENUM_HPP_GENERATE_ENUM_FIELDS_OP(_, x)\
     x,
 
 #define ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
-    BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_ENUM_FIELDS_OP, _, Fields)
+    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_ENUM_FIELDS_OP, _, Fields)
 
 //
 // ENUM_HPP_GENERATE_VALUES
 //
 
-#define ENUM_HPP_GENERATE_VALUES_OP(r, Enum, x)\
+#define ENUM_HPP_GENERATE_VALUES_OP(Enum, x)\
     ((::enum_hpp::detail::ignore_assign<Enum>)Enum::x).value,
 
 #define ENUM_HPP_GENERATE_VALUES(Enum, Fields)\
-    BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_VALUES_OP, Enum, Fields)
+    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_VALUES_OP, Enum, Fields)
 
 //
 // ENUM_HPP_GENERATE_NAMES
 //
 
-#define ENUM_HPP_GENERATE_NAMES_OP(r, d, x)\
+#define ENUM_HPP_GENERATE_NAMES_OP(_, x)\
     ::enum_hpp::detail::trim_raw_name(ENUM_HPP_PP_STRINGIZE(x)),
 
 #define ENUM_HPP_GENERATE_NAMES(Fields)\
-    BOOST_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_NAMES_OP, _, Fields)
+    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_NAMES_OP, _, Fields)
 
 //
 // ENUM_HPP_ENUM_CLASS
@@ -174,3 +174,17 @@ namespace enum_hpp::detail
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_3 3
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_4 4
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_5 5
+
+//
+// ENUM_HPP_PP_SEQ_FOR_EACH
+//
+
+#define ENUM_HPP_PP_SEQ_FOR_EACH(m, d, s) ENUM_HPP_PP_SEQ_FOR_EACH_I(m, d, ENUM_HPP_PP_SEQ_SIZE(s), s)
+#define ENUM_HPP_PP_SEQ_FOR_EACH_I(m, d, n, s) ENUM_HPP_PP_SEQ_FOR_EACH_II(m, d, n, s)
+#define ENUM_HPP_PP_SEQ_FOR_EACH_II(m, d, n, s) ENUM_HPP_PP_SEQ_FOR_EACH_ ## n (m, d, s)
+
+#define ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, BOOST_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_3(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, BOOST_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_4(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_3(m, d, BOOST_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_5(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_4(m, d, BOOST_PP_SEQ_TAIL(s))
