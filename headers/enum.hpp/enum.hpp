@@ -6,20 +6,9 @@
 
 #pragma once
 
-#include <stdexcept>
+#include <optional>
 #include <string_view>
 #include <type_traits>
-
-namespace enum_hpp
-{
-    class exception final : public std::runtime_error {
-    public:
-        explicit exception(const char* what)
-        : std::runtime_error(what) {}
-    };
-
-    constexpr std::size_t invalid_index = std::size_t(-1);
-}
 
 namespace enum_hpp::detail
 {
@@ -127,56 +116,38 @@ namespace enum_hpp::detail
             return static_cast<underlying_t>(e);\
         }\
         \
-        static constexpr std::string_view to_string(Enum e) noexcept {\
+        static constexpr std::optional<std::string_view> to_string(Enum e) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( e == values[i] ) {\
                     return names[i];\
                 }\
             }\
-            return std::string_view();\
+            return std::nullopt;\
         }\
         \
-        static Enum from_string(std::string_view name){\
+        static constexpr std::optional<Enum> from_string(std::string_view name) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( name == names[i] ) {\
                     return values[i];\
                 }\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::from_string(): invalid argument");\
+            return std::nullopt;\
         }\
         \
-        static constexpr bool from_string_nothrow(std::string_view name, Enum& result) noexcept {\
-            for ( std::size_t i = 0; i < size; ++i) {\
-                if ( name == names[i] ) {\
-                    result = values[i];\
-                    return true;\
-                }\
-            }\
-            return false;\
-        }\
-        \
-        static constexpr std::size_t to_index(Enum e) noexcept {\
+        static constexpr std::optional<std::size_t> to_index(Enum e) noexcept {\
             for ( std::size_t i = 0; i < size; ++i ) {\
                 if ( e == values[i] ) {\
                     return i;\
                 }\
             }\
-            return ::enum_hpp::invalid_index;\
+            return std::nullopt;\
         }\
         \
-        static Enum from_index(std::size_t index) {\
+        static constexpr std::optional<Enum> from_index(std::size_t index) noexcept {\
             if ( index < size ) {\
                 return values[index];\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::from_index(): invalid argument");\
-        }\
-        \
-        static constexpr bool from_index_nothrow(std::size_t index, Enum& result) noexcept {\
-            if ( index < size ) {\
-                result = values[index];\
-                return true;\
-            }\
-            return false;\
+            return std::nullopt;\
         }\
     };
 
