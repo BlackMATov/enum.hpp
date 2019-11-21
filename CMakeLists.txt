@@ -8,8 +8,8 @@ endif()
 project(enum.hpp)
 
 add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE headers)
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
+target_include_directories(${PROJECT_NAME} INTERFACE headers)
 
 if(BUILD_AS_STANDALONE)
     option(BUILD_WITH_UNTESTS "Build with unit tests" ON)
