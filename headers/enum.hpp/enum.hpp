@@ -10,6 +10,12 @@
 #include <string_view>
 #include <type_traits>
 
+namespace enum_hpp
+{
+    constexpr std::size_t invalid_index = std::size_t(-1);
+    constexpr std::string_view empty_string = std::string_view();
+}
+
 namespace enum_hpp::detail
 {
     template < typename Enum >
@@ -124,6 +130,12 @@ namespace enum_hpp::detail
             }\
             return std::nullopt;\
         }\
+        static constexpr std::string_view to_string_or_empty(Enum e) noexcept {\
+            if ( auto s = to_string(e) ) {\
+                return *s;\
+            }\
+            return ::enum_hpp::empty_string;\
+        }\
         \
         static constexpr std::optional<Enum> from_string(std::string_view name) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
@@ -141,6 +153,13 @@ namespace enum_hpp::detail
                 }\
             }\
             return std::nullopt;\
+        }\
+        \
+        static constexpr std::size_t to_index_or_invalid(Enum e) noexcept {\
+            if ( auto i = to_index(e) ) {\
+                return *i;\
+            }\
+            return ::enum_hpp::invalid_index;\
         }\
         \
         static constexpr std::optional<Enum> from_index(std::size_t index) noexcept {\
