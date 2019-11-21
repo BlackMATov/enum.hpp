@@ -164,33 +164,35 @@ namespace
         (white = red | green | blue))
 }
 
-SECTION("traits_using") {
+int main() {
     // size
-    STATIC_REQUIRE(color_traits::size == 4);
+    static_assert(color_traits::size == 4);
 
     // to_underlying
-    STATIC_REQUIRE(color_traits::to_underlying(color::white) == 0xFFFFFF);
+    static_assert(color_traits::to_underlying(color::white) == 0xFFFFFF);
 
     // to_string
-    STATIC_REQUIRE(color_traits::to_string(color::red) == "red");
-    STATIC_REQUIRE(color_traits::to_string(color(42)) == std::nullopt);
+    static_assert(color_traits::to_string(color::red) == "red");
+    static_assert(color_traits::to_string(color(42)) == std::nullopt);
 
     // from_string
-    STATIC_REQUIRE(color_traits::from_string("green") == color::green);
-    STATIC_REQUIRE(color_traits::from_string("error") == std::nullopt);
+    static_assert(color_traits::from_string("green") == color::green);
+    static_assert(color_traits::from_string("error") == std::nullopt);
 
     // to_index
-    STATIC_REQUIRE(color_traits::to_index(color::blue) == 2);
-    STATIC_REQUIRE(color_traits::to_index(color(42)) == std::nullopt);
+    static_assert(color_traits::to_index(color::blue) == 2);
+    static_assert(color_traits::to_index(color(42)) == std::nullopt);
 
     // from_index
-    STATIC_REQUIRE(color_traits::from_index(2) == color::blue);
-    STATIC_REQUIRE(color_traits::from_index(42) == std::nullopt);
+    static_assert(color_traits::from_index(2) == color::blue);
+    static_assert(color_traits::from_index(42) == std::nullopt);
 
     // names
     for ( auto n : color_traits::names ) {
         std::cout << n << ",";
     } // stdout: red,green,blue,
+
+    return 0;
 }
 ```
 
