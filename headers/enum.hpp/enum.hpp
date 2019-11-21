@@ -107,13 +107,13 @@ namespace enum_hpp::detail
     private:\
         enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
     public:\
-        using underlying_t = std::underlying_type_t<Enum>;\
+        using underlying_type = std::underlying_type_t<Enum>;\
         static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
         static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) };\
         static constexpr const std::string_view names[] = { ENUM_HPP_GENERATE_NAMES(Fields) };\
     public:\
-        static constexpr underlying_t to_underlying(Enum e) noexcept {\
-            return static_cast<underlying_t>(e);\
+        static constexpr underlying_type to_underlying(Enum e) noexcept {\
+            return static_cast<underlying_type>(e);\
         }\
         \
         static constexpr std::optional<std::string_view> to_string(Enum e) noexcept {\

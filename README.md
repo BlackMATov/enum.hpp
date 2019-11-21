@@ -23,6 +23,12 @@
 
 [enum]: https://github.com/BlackMATov/enum.hpp
 
+## Requirements
+
+- [gcc](https://www.gnu.org/software/gcc/) **>= 7**
+- [clang](https://clang.llvm.org/) **>= 7.0**
+- [msvc](https://visualstudio.microsoft.com/) **>= 2017**
+
 ## Installation
 
 [enum.hpp][enum] is a header-only library. All you need to do is copy the headers files from `headers` directory into your project and include them:
@@ -57,6 +63,7 @@ enum debug_level : int {
 };
 
 struct debug_level_traits {
+    using underlying_type = int;
     static constexpr std::size_t size = 3;
 
     static constexpr const debug_level values[] = {
@@ -71,15 +78,13 @@ struct debug_level_traits {
         "level_warning"
     };
 
-    static constexpr std::string_view to_string(
-        debug_level e) noexcept;
+    static constexpr underlying_type to_underlying(debug_level e) noexcept;
 
-    static debug_level from_string(
-        std::string_view name);
+    static constexpr std::optional<std::string_view> to_string(debug_level e) noexcept;
+    static constexpr std::optional<debug_level> from_string(std::string_view name) noexcept;
 
-    static constexpr bool from_string_nothrow(
-        std::string_view name,
-        debug_level& result) noexcept;
+    static constexpr std::optional<std::size_t> to_index(debug_level e) noexcept;
+    static constexpr std::optional<debug_level> from_index(std::size_t index) noexcept;
 };
 ```
 
@@ -100,6 +105,7 @@ enum class color : unsigned {
 };
 
 struct color_traits {
+    using underlying_type = unsigned;
     static constexpr std::size_t size = 4;
 
     static constexpr const color values[] = {
@@ -116,44 +122,56 @@ struct color_traits {
         "white"
     };
 
-    static constexpr std::string_view to_string(
-        color e) noexcept;
+    static constexpr underlying_type to_underlying(color e) noexcept;
 
-    static color from_string(
-        std::string_view name);
+    static constexpr std::optional<std::string_view> to_string(color e) noexcept;
+    static constexpr std::optional<color> from_string(std::string_view name) noexcept;
 
-    static constexpr bool from_string_nothrow(
-        std::string_view name,
-        color& result) noexcept;
+    static constexpr std::optional<std::size_t> to_index(color e) noexcept;
+    static constexpr std::optional<color> from_index(std::size_t index) noexcept;
 };
 ```
 
 ### Traits using
 
 ```cpp
-ENUM_HPP_CLASS_DECL(color, unsigned, red, green, blue)
-
-// size
-color_traits::size; // 3
-
-// to_string
-color_traits::to_string(color::red); // returns "red";
-color_traits::to_string(color(42)); // returns "";
-
-// from_string
-color_traits::from_string("green"); // returns color::green;
-color_traits::from_string("error"); // throws enum_hpp::exception
-
-// from_string_nothrow
-color result;
-bool success = color_traits::from_string_nothrow("blue", result);
-// success == true, result == color::blue
-
-// names
-for ( auto n : color_traits::names ) {
-    std::cout << n << ",";
+namespace
+{
+    ENUM_HPP_CLASS_DECL(color, unsigned,
+        (red = 0xFF0000)
+        (green = 0x00FF00)
+        (blue = 0x0000FF)
+        (white = red | green | blue))
 }
-// prints red,green,blue
+
+SECTION("traits_using") {
+    // size
+    STATIC_REQUIRE(color_traits::size == 4);
+
+    // to_underlying
+    STATIC_REQUIRE(color_traits::to_underlying(color::white) == 0xFFFFFF);
+
+    // to_string
+    STATIC_REQUIRE(color_traits::to_string(color::red) == "red");
+    STATIC_REQUIRE(color_traits::to_string(color(42)) == std::nullopt);
+
+    // from_string
+    STATIC_REQUIRE(color_traits::from_string("green") == color::green);
+    STATIC_REQUIRE(color_traits::from_string("error") == std::nullopt);
+
+    // to_index
+    STATIC_REQUIRE(color_traits::to_index(color::blue) == 2);
+    STATIC_REQUIRE(color_traits::to_index(color(42)) == std::nullopt);
+
+    // from_index
+    STATIC_REQUIRE(color_traits::from_index(2) == color::blue);
+    STATIC_REQUIRE(color_traits::from_index(42) == std::nullopt);
+
+    // names
+    for ( auto n : color_traits::names ) {
+        std::cout << n << ",";
+    } // stdout: red,green,blue,
+}
 ```
 
 ## Alternatives

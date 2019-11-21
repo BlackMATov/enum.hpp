@@ -64,19 +64,19 @@ TEST_CASE("enum") {
                 std::underlying_type_t<sn::color>,
                 unsigned>);
 
-            REQUIRE(enum_to_underlying(sn::color::red) == 2);
-            REQUIRE(enum_to_underlying(sn::color::green) == 3);
-            REQUIRE(enum_to_underlying(sn::color::blue) == 6);
+            REQUIRE(enum_to_underlying(sn::color::red) == 2u);
+            REQUIRE(enum_to_underlying(sn::color::green) == 3u);
+            REQUIRE(enum_to_underlying(sn::color::blue) == 6u);
         }
         {
             STATIC_REQUIRE(std::is_same_v<
                 std::underlying_type_t<sn::render::mask>,
                 unsigned char>);
 
-            REQUIRE(enum_to_underlying(sn::render::mask::none) == 0);
-            REQUIRE(enum_to_underlying(sn::render::mask::color) == 1);
-            REQUIRE(enum_to_underlying(sn::render::mask::alpha) == 2);
-            REQUIRE(enum_to_underlying(sn::render::mask::all) == 3);
+            REQUIRE(enum_to_underlying(sn::render::mask::none) == 0u);
+            REQUIRE(enum_to_underlying(sn::render::mask::color) == 1u);
+            REQUIRE(enum_to_underlying(sn::render::mask::alpha) == 2u);
+            REQUIRE(enum_to_underlying(sn::render::mask::all) == 3u);
         }
         {
             STATIC_REQUIRE(std::is_same_v<
@@ -91,17 +91,17 @@ TEST_CASE("enum") {
 
     SECTION("size") {
         {
-            REQUIRE(sn::color_traits::size == 3);
+            REQUIRE(sn::color_traits::size == 3u);
             REQUIRE(sn::color_traits::size == std::size(sn::color_traits::names));
             REQUIRE(sn::color_traits::size == std::size(sn::color_traits::values));
         }
         {
-            REQUIRE(sn::render::mask_traits::size == 4);
+            REQUIRE(sn::render::mask_traits::size == 4u);
             REQUIRE(sn::render::mask_traits::size == std::size(sn::render::mask_traits::names));
             REQUIRE(sn::render::mask_traits::size == std::size(sn::render::mask_traits::values));
         }
         {
-            REQUIRE(sn::numbers_traits::size == 241);
+            REQUIRE(sn::numbers_traits::size == 241u);
             REQUIRE(sn::numbers_traits::size == std::size(sn::numbers_traits::names));
             REQUIRE(sn::numbers_traits::size == std::size(sn::numbers_traits::values));
         }
@@ -172,21 +172,21 @@ TEST_CASE("enum") {
 
     SECTION("to_index") {
         {
-            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::red) == 0);
-            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::green) == 1);
-            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::blue) == 2);
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::red) == 0u);
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::green) == 1u);
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::blue) == 2u);
             STATIC_REQUIRE_FALSE(sn::color_traits::to_index(sn::color(42)));
         }
         {
-            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::none) == 0);
-            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::color) == 1);
-            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::alpha) == 2);
-            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::all) == 3);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::none) == 0u);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::color) == 1u);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::alpha) == 2u);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::all) == 3u);
         }
         {
-            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_0) == 0);
-            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_180) == 180);
-            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_240) == 240);
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_0) == 0u);
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_180) == 180u);
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_240) == 240u);
             STATIC_REQUIRE_FALSE(sn::numbers_traits::to_index(sn::numbers(100500)));
         }
     }
