@@ -6,17 +6,9 @@
 
 #pragma once
 
-#include <stdexcept>
+#include <optional>
 #include <string_view>
-
-namespace enum_hpp
-{
-    class exception final : public std::runtime_error {
-    public:
-        explicit exception(const char* what)
-        : std::runtime_error(what) {}
-    };
-}
+#include <type_traits>
 
 namespace enum_hpp::detail
 {
@@ -94,7 +86,7 @@ namespace enum_hpp::detail
     enum Enum : Type {\
         ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
     };\
-    ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)
+    ENUM_HPP_TRAITS_DECL(Enum, Fields)
 
 //
 // ENUM_HPP_CLASS_DECL
@@ -104,47 +96,58 @@ namespace enum_hpp::detail
     enum class Enum : Type {\
         ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
     };\
-    ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)
+    ENUM_HPP_TRAITS_DECL(Enum, Fields)
 
 //
-// ENUM_HPP_TRAITS_IMPL
+// ENUM_HPP_TRAITS_DECL
 //
 
-#define ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)\
+#define ENUM_HPP_TRAITS_DECL(Enum, Fields)\
     struct Enum##_traits {\
     private:\
         enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
     public:\
+        using underlying_type = std::underlying_type_t<Enum>;\
         static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
         static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) };\
         static constexpr const std::string_view names[] = { ENUM_HPP_GENERATE_NAMES(Fields) };\
     public:\
-        static constexpr std::string_view to_string(Enum e) noexcept {\
+        static constexpr underlying_type to_underlying(Enum e) noexcept {\
+            return static_cast<underlying_type>(e);\
+        }\
+        \
+        static constexpr std::optional<std::string_view> to_string(Enum e) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( e == values[i] ) {\
                     return names[i];\
                 }\
             }\
-            return std::string_view();\
+            return std::nullopt;\
         }\
         \
-        static Enum from_string(std::string_view name){\
+        static constexpr std::optional<Enum> from_string(std::string_view name) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( name == names[i] ) {\
                     return values[i];\
                 }\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::from_string(): invalid argument");\
+            return std::nullopt;\
         }\
         \
-        static constexpr bool from_string_nothrow(std::string_view name, Enum& result) noexcept {\
-            for ( std::size_t i = 0; i < size; ++i) {\
-                if ( name == names[i] ) {\
-                    result = values[i];\
-                    return true;\
+        static constexpr std::optional<std::size_t> to_index(Enum e) noexcept {\
+            for ( std::size_t i = 0; i < size; ++i ) {\
+                if ( e == values[i] ) {\
+                    return i;\
                 }\
             }\
-            return false;\
+            return std::nullopt;\
+        }\
+        \
+        static constexpr std::optional<Enum> from_index(std::size_t index) noexcept {\
+            if ( index < size ) {\
+                return values[index];\
+            }\
+            return std::nullopt;\
         }\
     };
 
