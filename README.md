@@ -81,10 +81,20 @@ struct debug_level_traits {
     static constexpr underlying_type to_underlying(debug_level e) noexcept;
 
     static constexpr std::optional<std::string_view> to_string(debug_level e) noexcept;
+    static constexpr std::string_view to_string_or_empty(Enum e) noexcept;
+    static std::string_view to_string_or_throw(Enum e);
+
     static constexpr std::optional<debug_level> from_string(std::string_view name) noexcept;
+    static constexpr debug_level from_string_or_default(std::string_view name, debug_level def) noexcept;
+    static debug_level from_string_or_throw(std::string_view name);
 
     static constexpr std::optional<std::size_t> to_index(debug_level e) noexcept;
+    static constexpr std::size_t to_index_or_invalid(debug_level e) noexcept;
+    static std::size_t to_index_or_throw(debug_level e);
+
     static constexpr std::optional<debug_level> from_index(std::size_t index) noexcept;
+    static constexpr debug_level from_index_or_default(std::size_t index, debug_level def) noexcept;
+    static debug_level from_index_or_throw(std::size_t index);
 };
 ```
 
@@ -125,10 +135,20 @@ struct color_traits {
     static constexpr underlying_type to_underlying(color e) noexcept;
 
     static constexpr std::optional<std::string_view> to_string(color e) noexcept;
+    static constexpr std::string_view to_string_or_empty(Enum e) noexcept;
+    static std::string_view to_string_or_throw(Enum e);
+
     static constexpr std::optional<color> from_string(std::string_view name) noexcept;
+    static constexpr color from_string_or_default(std::string_view name, color def) noexcept;
+    static color from_string_or_throw(std::string_view name);
 
     static constexpr std::optional<std::size_t> to_index(color e) noexcept;
+    static constexpr std::size_t to_index_or_invalid(color e) noexcept;
+    static std::size_t to_index_or_throw(color e);
+
     static constexpr std::optional<color> from_index(std::size_t index) noexcept;
+    static constexpr color from_index_or_default(std::size_t index, color def) noexcept;
+    static color from_index_or_throw(std::size_t index);
 };
 ```
 
