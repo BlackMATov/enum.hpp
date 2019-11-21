@@ -6,12 +6,8 @@
 
 #pragma once
 
-#include <cstddef>
-
 #include <stdexcept>
 #include <string_view>
-
-#include <boost/preprocessor/seq/seq.hpp>
 
 namespace enum_hpp
 {
@@ -156,6 +152,15 @@ namespace enum_hpp::detail
 #define ENUM_HPP_PP_STRINGIZE_I(x) #x
 
 //
+// ENUM_HPP_PP_SEQ_HEAD
+//
+
+#define ENUM_HPP_PP_SEQ_HEAD(seq) ENUM_HPP_PP_SEQ_HEAD_II((ENUM_HPP_PP_SEQ_HEAD_I seq))
+#define ENUM_HPP_PP_SEQ_HEAD_I(x) x, ENUM_HPP_PP_NOTHING
+#define ENUM_HPP_PP_SEQ_HEAD_II(p) ENUM_HPP_PP_SEQ_HEAD_III p
+#define ENUM_HPP_PP_SEQ_HEAD_III(x, _) x
+
+//
 // ENUM_HPP_PP_SEQ_TAIL
 //
 
@@ -190,8 +195,8 @@ namespace enum_hpp::detail
 #define ENUM_HPP_PP_SEQ_FOR_EACH_I(m, d, n, s) ENUM_HPP_PP_SEQ_FOR_EACH_II(m, d, n, s)
 #define ENUM_HPP_PP_SEQ_FOR_EACH_II(m, d, n, s) ENUM_HPP_PP_SEQ_FOR_EACH_ ## n (m, d, s)
 
-#define ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s))
-#define ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
-#define ENUM_HPP_PP_SEQ_FOR_EACH_3(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
-#define ENUM_HPP_PP_SEQ_FOR_EACH_4(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_3(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
-#define ENUM_HPP_PP_SEQ_FOR_EACH_5(m, d, s) m(d, BOOST_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_4(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_3(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_4(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_3(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_5(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_4(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
