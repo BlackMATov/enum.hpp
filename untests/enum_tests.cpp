@@ -133,19 +133,51 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::color_traits::to_string(sn::color::red) == "red");
             STATIC_REQUIRE(sn::color_traits::to_string(sn::color::green) == "green");
             STATIC_REQUIRE(sn::color_traits::to_string(sn::color::blue) == "blue");
+
+            STATIC_REQUIRE(sn::color_traits::to_string_or_empty(sn::color::red) == "red");
+            STATIC_REQUIRE(sn::color_traits::to_string_or_empty(sn::color::green) == "green");
+            STATIC_REQUIRE(sn::color_traits::to_string_or_empty(sn::color::blue) == "blue");
+
+            REQUIRE(sn::color_traits::to_string_or_throw(sn::color::red) == "red");
+            REQUIRE(sn::color_traits::to_string_or_throw(sn::color::green) == "green");
+            REQUIRE(sn::color_traits::to_string_or_throw(sn::color::blue) == "blue");
+
             STATIC_REQUIRE_FALSE(sn::color_traits::to_string(sn::color(42)));
+            STATIC_REQUIRE(sn::color_traits::to_string_or_empty(sn::color(42)) == "");
+            REQUIRE_THROWS_AS(sn::color_traits::to_string_or_throw(sn::color(42)), enum_hpp::exception);
         }
         {
             STATIC_REQUIRE(sn::render::mask_traits::to_string(sn::render::mask::none) == "none");
             STATIC_REQUIRE(sn::render::mask_traits::to_string(sn::render::mask::color) == "color");
             STATIC_REQUIRE(sn::render::mask_traits::to_string(sn::render::mask::alpha) == "alpha");
             STATIC_REQUIRE(sn::render::mask_traits::to_string(sn::render::mask::all) == "all");
+
+            STATIC_REQUIRE(sn::render::mask_traits::to_string_or_empty(sn::render::mask::none) == "none");
+            STATIC_REQUIRE(sn::render::mask_traits::to_string_or_empty(sn::render::mask::color) == "color");
+            STATIC_REQUIRE(sn::render::mask_traits::to_string_or_empty(sn::render::mask::alpha) == "alpha");
+            STATIC_REQUIRE(sn::render::mask_traits::to_string_or_empty(sn::render::mask::all) == "all");
+
+            REQUIRE(sn::render::mask_traits::to_string_or_throw(sn::render::mask::none) == "none");
+            REQUIRE(sn::render::mask_traits::to_string_or_throw(sn::render::mask::color) == "color");
+            REQUIRE(sn::render::mask_traits::to_string_or_throw(sn::render::mask::alpha) == "alpha");
+            REQUIRE(sn::render::mask_traits::to_string_or_throw(sn::render::mask::all) == "all");
         }
         {
             STATIC_REQUIRE(sn::numbers_traits::to_string(sn::_0) == "_0");
             STATIC_REQUIRE(sn::numbers_traits::to_string(sn::_180) == "_180");
             STATIC_REQUIRE(sn::numbers_traits::to_string(sn::_240) == "_240");
+
+            STATIC_REQUIRE(sn::numbers_traits::to_string_or_empty(sn::_0) == "_0");
+            STATIC_REQUIRE(sn::numbers_traits::to_string_or_empty(sn::_180) == "_180");
+            STATIC_REQUIRE(sn::numbers_traits::to_string_or_empty(sn::_240) == "_240");
+
+            REQUIRE(sn::numbers_traits::to_string_or_throw(sn::_0) == "_0");
+            REQUIRE(sn::numbers_traits::to_string_or_throw(sn::_180) == "_180");
+            REQUIRE(sn::numbers_traits::to_string_or_throw(sn::_240) == "_240");
+
             STATIC_REQUIRE_FALSE(sn::numbers_traits::to_string(sn::numbers(100500)));
+            STATIC_REQUIRE(sn::numbers_traits::to_string_or_empty(sn::numbers(100500)) == "");
+            REQUIRE_THROWS_AS(sn::numbers_traits::to_string_or_throw(sn::numbers(100500)), enum_hpp::exception);
         }
     }
 
@@ -154,7 +186,18 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::color_traits::from_string("red") == sn::color::red);
             STATIC_REQUIRE(sn::color_traits::from_string("green") == sn::color::green);
             STATIC_REQUIRE(sn::color_traits::from_string("blue") == sn::color::blue);
+
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("red", sn::color::green) == sn::color::red);
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("green", sn::color::red) == sn::color::green);
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("blue", sn::color::red) == sn::color::blue);
+
+            REQUIRE(sn::color_traits::from_string_or_throw("red") == sn::color::red);
+            REQUIRE(sn::color_traits::from_string_or_throw("green") == sn::color::green);
+            REQUIRE(sn::color_traits::from_string_or_throw("blue") == sn::color::blue);
+
             STATIC_REQUIRE_FALSE(sn::color_traits::from_string("42"));
+            STATIC_REQUIRE(sn::color_traits::from_string_or_default("42", sn::color::red) == sn::color::red);
+            REQUIRE_THROWS_AS(sn::color_traits::from_string_or_throw("42"), enum_hpp::exception);
         }
         {
             STATIC_REQUIRE(sn::render::mask_traits::from_string("none") == sn::render::mask::none);
@@ -175,19 +218,51 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::color_traits::to_index(sn::color::red) == 0u);
             STATIC_REQUIRE(sn::color_traits::to_index(sn::color::green) == 1u);
             STATIC_REQUIRE(sn::color_traits::to_index(sn::color::blue) == 2u);
+
+            STATIC_REQUIRE(sn::color_traits::to_index_or_invalid(sn::color::red) == 0u);
+            STATIC_REQUIRE(sn::color_traits::to_index_or_invalid(sn::color::green) == 1u);
+            STATIC_REQUIRE(sn::color_traits::to_index_or_invalid(sn::color::blue) == 2u);
+
+            REQUIRE(sn::color_traits::to_index_or_throw(sn::color::red) == 0u);
+            REQUIRE(sn::color_traits::to_index_or_throw(sn::color::green) == 1u);
+            REQUIRE(sn::color_traits::to_index_or_throw(sn::color::blue) == 2u);
+
             STATIC_REQUIRE_FALSE(sn::color_traits::to_index(sn::color(42)));
+            STATIC_REQUIRE(sn::color_traits::to_index_or_invalid(sn::color(42)) == enum_hpp::invalid_index);
+            REQUIRE_THROWS_AS(sn::color_traits::to_index_or_throw(sn::color(42)), enum_hpp::exception);
         }
         {
             STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::none) == 0u);
             STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::color) == 1u);
             STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::alpha) == 2u);
             STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::all) == 3u);
+
+            STATIC_REQUIRE(sn::render::mask_traits::to_index_or_invalid(sn::render::mask::none) == 0u);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index_or_invalid(sn::render::mask::color) == 1u);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index_or_invalid(sn::render::mask::alpha) == 2u);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index_or_invalid(sn::render::mask::all) == 3u);
+
+            REQUIRE(sn::render::mask_traits::to_index_or_throw(sn::render::mask::none) == 0u);
+            REQUIRE(sn::render::mask_traits::to_index_or_throw(sn::render::mask::color) == 1u);
+            REQUIRE(sn::render::mask_traits::to_index_or_throw(sn::render::mask::alpha) == 2u);
+            REQUIRE(sn::render::mask_traits::to_index_or_throw(sn::render::mask::all) == 3u);
         }
         {
             STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_0) == 0u);
             STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_180) == 180u);
             STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_240) == 240u);
+
+            STATIC_REQUIRE(sn::numbers_traits::to_index_or_invalid(sn::_0) == 0u);
+            STATIC_REQUIRE(sn::numbers_traits::to_index_or_invalid(sn::_180) == 180u);
+            STATIC_REQUIRE(sn::numbers_traits::to_index_or_invalid(sn::_240) == 240u);
+
+            REQUIRE(sn::numbers_traits::to_index_or_throw(sn::_0) == 0u);
+            REQUIRE(sn::numbers_traits::to_index_or_throw(sn::_180) == 180u);
+            REQUIRE(sn::numbers_traits::to_index_or_throw(sn::_240) == 240u);
+
             STATIC_REQUIRE_FALSE(sn::numbers_traits::to_index(sn::numbers(100500)));
+            STATIC_REQUIRE(sn::numbers_traits::to_index_or_invalid(sn::numbers(100500)) == enum_hpp::invalid_index);
+            REQUIRE_THROWS_AS(sn::numbers_traits::to_index_or_throw(sn::numbers(100500)), enum_hpp::exception);
         }
     }
 
@@ -196,7 +271,18 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::color_traits::from_index(0) == sn::color::red);
             STATIC_REQUIRE(sn::color_traits::from_index(1) == sn::color::green);
             STATIC_REQUIRE(sn::color_traits::from_index(2) == sn::color::blue);
+
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(0, sn::color::green) == sn::color::red);
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(1, sn::color::red) == sn::color::green);
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(2, sn::color::red) == sn::color::blue);
+
+            REQUIRE(sn::color_traits::from_index_or_throw(0) == sn::color::red);
+            REQUIRE(sn::color_traits::from_index_or_throw(1) == sn::color::green);
+            REQUIRE(sn::color_traits::from_index_or_throw(2) == sn::color::blue);
+
             STATIC_REQUIRE_FALSE(sn::color_traits::from_index(42));
+            STATIC_REQUIRE(sn::color_traits::from_index_or_default(42, sn::color::red) == sn::color::red);
+            REQUIRE_THROWS_AS(sn::color_traits::from_index_or_throw(42), enum_hpp::exception);
         }
         {
             STATIC_REQUIRE(sn::render::mask_traits::from_index(0) == sn::render::mask::none);
