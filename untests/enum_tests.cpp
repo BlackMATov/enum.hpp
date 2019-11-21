@@ -107,6 +107,27 @@ TEST_CASE("enum") {
         }
     }
 
+    SECTION("to_underlying") {
+        {
+            STATIC_REQUIRE(sn::color_traits::to_underlying(sn::color::red) == enum_to_underlying(sn::color::red));
+            STATIC_REQUIRE(sn::color_traits::to_underlying(sn::color::green) == enum_to_underlying(sn::color::green));
+            STATIC_REQUIRE(sn::color_traits::to_underlying(sn::color::blue) == enum_to_underlying(sn::color::blue));
+            STATIC_REQUIRE(sn::color_traits::to_underlying(sn::color(42)) == 42);
+        }
+        {
+            STATIC_REQUIRE(sn::render::mask_traits::to_underlying(sn::render::mask::none) == enum_to_underlying(sn::render::mask::none));
+            STATIC_REQUIRE(sn::render::mask_traits::to_underlying(sn::render::mask::color) == enum_to_underlying(sn::render::mask::color));
+            STATIC_REQUIRE(sn::render::mask_traits::to_underlying(sn::render::mask::alpha) == enum_to_underlying(sn::render::mask::alpha));
+            STATIC_REQUIRE(sn::render::mask_traits::to_underlying(sn::render::mask::all) == enum_to_underlying(sn::render::mask::all));
+        }
+        {
+            STATIC_REQUIRE(sn::numbers_traits::to_underlying(sn::_0) == enum_to_underlying(sn::_0));
+            STATIC_REQUIRE(sn::numbers_traits::to_underlying(sn::_180) == enum_to_underlying(sn::_180));
+            STATIC_REQUIRE(sn::numbers_traits::to_underlying(sn::_240) == enum_to_underlying(sn::_240));
+            STATIC_REQUIRE(sn::numbers_traits::to_underlying(sn::numbers(100500)) == 100500);
+        }
+    }
+
     SECTION("to_string") {
         {
             STATIC_REQUIRE(sn::color_traits::to_string(sn::color::red) == "red");

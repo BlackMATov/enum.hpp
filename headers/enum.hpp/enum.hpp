@@ -8,6 +8,7 @@
 
 #include <stdexcept>
 #include <string_view>
+#include <type_traits>
 
 namespace enum_hpp
 {
@@ -96,7 +97,7 @@ namespace enum_hpp::detail
     enum Enum : Type {\
         ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
     };\
-    ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)
+    ENUM_HPP_TRAITS_DECL(Enum, Fields)
 
 //
 // ENUM_HPP_CLASS_DECL
@@ -106,21 +107,26 @@ namespace enum_hpp::detail
     enum class Enum : Type {\
         ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
     };\
-    ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)
+    ENUM_HPP_TRAITS_DECL(Enum, Fields)
 
 //
-// ENUM_HPP_TRAITS_IMPL
+// ENUM_HPP_TRAITS_DECL
 //
 
-#define ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)\
+#define ENUM_HPP_TRAITS_DECL(Enum, Fields)\
     struct Enum##_traits {\
     private:\
         enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
     public:\
+        using underlying_t = std::underlying_type_t<Enum>;\
         static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
         static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) };\
         static constexpr const std::string_view names[] = { ENUM_HPP_GENERATE_NAMES(Fields) };\
     public:\
+        static constexpr underlying_t to_underlying(Enum e) noexcept {\
+            return static_cast<underlying_t>(e);\
+        }\
+        \
         static constexpr std::string_view to_string(Enum e) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( e == values[i] ) {\
