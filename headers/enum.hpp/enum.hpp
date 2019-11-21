@@ -87,13 +87,30 @@ namespace enum_hpp::detail
     ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_NAMES_OP, _, Fields)
 
 //
-// ENUM_HPP_ENUM_CLASS
+// ENUM_HPP_DECL
 //
 
-#define ENUM_HPP_ENUM_CLASS(Enum, Type, Fields)\
+#define ENUM_HPP_DECL(Enum, Type, Fields)\
+    enum Enum : Type {\
+        ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
+    };\
+    ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)
+
+//
+// ENUM_HPP_CLASS_DECL
+//
+
+#define ENUM_HPP_CLASS_DECL(Enum, Type, Fields)\
     enum class Enum : Type {\
         ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
     };\
+    ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)
+
+//
+// ENUM_HPP_TRAITS_IMPL
+//
+
+#define ENUM_HPP_TRAITS_IMPL(Enum, Type, Fields)\
     struct Enum##_traits {\
     private:\
         enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
