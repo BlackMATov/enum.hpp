@@ -7,6 +7,7 @@
 #pragma once
 
 #include <optional>
+#include <stdexcept>
 #include <string_view>
 #include <type_traits>
 
@@ -14,6 +15,12 @@ namespace enum_hpp
 {
     constexpr std::size_t invalid_index = std::size_t(-1);
     constexpr std::string_view empty_string = std::string_view();
+
+    class exception final : public std::runtime_error {
+    public:
+        explicit exception(const char* what)
+        : std::runtime_error(what) {}
+    };
 }
 
 namespace enum_hpp::detail
@@ -136,6 +143,12 @@ namespace enum_hpp::detail
             }\
             return ::enum_hpp::empty_string;\
         }\
+        static std::string_view to_string_or_throw(Enum e) {\
+            if ( auto s = to_string(e) ) {\
+                return *s;\
+            }\
+            throw ::enum_hpp::exception(#Enum "_traits::to_string_or_throw(): invalid argument");\
+        }\
         \
         static constexpr std::optional<Enum> from_string(std::string_view name) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
@@ -160,6 +173,12 @@ namespace enum_hpp::detail
                 return *i;\
             }\
             return ::enum_hpp::invalid_index;\
+        }\
+        static std::size_t to_index_or_throw(Enum e) {\
+            if ( auto i = to_index(e) ) {\
+                return *i;\
+            }\
+            throw ::enum_hpp::exception(#Enum "_traits::to_index_or_throw(): invalid argument");\
         }\
         \
         static constexpr std::optional<Enum> from_index(std::size_t index) noexcept {\
