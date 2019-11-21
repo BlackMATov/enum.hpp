@@ -16,6 +16,8 @@ namespace enum_hpp
         explicit exception(const char* what)
         : std::runtime_error(what) {}
     };
+
+    constexpr std::size_t invalid_index = std::size_t(-1);
 }
 
 namespace enum_hpp::detail
@@ -143,6 +145,30 @@ namespace enum_hpp::detail
                     result = values[i];\
                     return true;\
                 }\
+            }\
+            return false;\
+        }\
+        \
+        static constexpr std::size_t to_index(Enum e) noexcept {\
+            for ( std::size_t i = 0; i < size; ++i ) {\
+                if ( e == values[i] ) {\
+                    return i;\
+                }\
+            }\
+            return ::enum_hpp::invalid_index;\
+        }\
+        \
+        static Enum from_index(std::size_t index) {\
+            if ( index < size ) {\
+                return values[index];\
+            }\
+            throw ::enum_hpp::exception(#Enum "_traits::from_index(): invalid argument");\
+        }\
+        \
+        static constexpr bool from_index_nothrow(std::size_t index, Enum& result) noexcept {\
+            if ( index < size ) {\
+                result = values[index];\
+                return true;\
             }\
             return false;\
         }\

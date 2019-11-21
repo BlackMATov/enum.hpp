@@ -182,4 +182,80 @@ TEST_CASE("enum") {
             REQUIRE(result == sn::_240);
         }
     }
+
+    SECTION("to_index") {
+        {
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::red) == 0);
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::green) == 1);
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color::blue) == 2);
+            STATIC_REQUIRE(sn::color_traits::to_index(sn::color(42)) == enum_hpp::invalid_index);
+        }
+        {
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::none) == 0);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::color) == 1);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::alpha) == 2);
+            STATIC_REQUIRE(sn::render::mask_traits::to_index(sn::render::mask::all) == 3);
+        }
+        {
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_0) == 0);
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_180) == 180);
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::_240) == 240);
+            STATIC_REQUIRE(sn::numbers_traits::to_index(sn::numbers(100500)) == enum_hpp::invalid_index);
+        }
+    }
+
+    SECTION("from_index") {
+        {
+            REQUIRE(sn::color_traits::from_index(0) == sn::color::red);
+            REQUIRE(sn::color_traits::from_index(1) == sn::color::green);
+            REQUIRE(sn::color_traits::from_index(2) == sn::color::blue);
+            REQUIRE_THROWS_AS(sn::color_traits::from_index(42), enum_hpp::exception);
+        }
+        {
+            REQUIRE(sn::render::mask_traits::from_index(0) == sn::render::mask::none);
+            REQUIRE(sn::render::mask_traits::from_index(1) == sn::render::mask::color);
+            REQUIRE(sn::render::mask_traits::from_index(2) == sn::render::mask::alpha);
+            REQUIRE(sn::render::mask_traits::from_index(3) == sn::render::mask::all);
+            REQUIRE_THROWS_AS(sn::render::mask_traits::from_index(42), enum_hpp::exception);
+        }
+        {
+            REQUIRE(sn::numbers_traits::from_index(10) == sn::_10);
+            REQUIRE(sn::numbers_traits::from_index(240) == sn::_240);
+            REQUIRE_THROWS_AS(sn::numbers_traits::from_index(100500), enum_hpp::exception);
+        }
+    }
+
+    SECTION("from_index_nothrow") {
+        {
+            sn::color result{42};
+            REQUIRE(sn::color_traits::from_index_nothrow(0, result));
+            REQUIRE(result == sn::color::red);
+            REQUIRE(sn::color_traits::from_index_nothrow(1, result));
+            REQUIRE(result == sn::color::green);
+            REQUIRE(sn::color_traits::from_index_nothrow(2, result));
+            REQUIRE(result == sn::color::blue);
+            REQUIRE_FALSE(sn::color_traits::from_index_nothrow(42, result));
+            REQUIRE(result == sn::color::blue);
+        }
+        {
+            sn::render::mask result{42};
+            REQUIRE(sn::render::mask_traits::from_index_nothrow(0, result));
+            REQUIRE(result == sn::render::mask::none);
+            REQUIRE(sn::render::mask_traits::from_index_nothrow(1, result));
+            REQUIRE(result == sn::render::mask::color);
+            REQUIRE(sn::render::mask_traits::from_index_nothrow(2, result));
+            REQUIRE(result == sn::render::mask::alpha);
+            REQUIRE(sn::render::mask_traits::from_index_nothrow(3, result));
+            REQUIRE(result == sn::render::mask::all);
+            REQUIRE_FALSE(sn::render::mask_traits::from_index_nothrow(42, result));
+            REQUIRE(result == sn::render::mask::all);
+        }
+        {
+            sn::numbers result{100500};
+            REQUIRE(sn::numbers_traits::from_index_nothrow(240, result));
+            REQUIRE(result == sn::_240);
+            REQUIRE_FALSE(sn::numbers_traits::from_index_nothrow(100500, result));
+            REQUIRE(result == sn::_240);
+        }
+    }
 }
