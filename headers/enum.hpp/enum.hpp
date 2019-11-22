@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <array>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
@@ -21,6 +22,98 @@ namespace enum_hpp
         explicit exception(const char* what)
         : std::runtime_error(what) {}
     };
+}
+
+namespace enum_hpp
+{
+    template < typename Enum >
+    struct traits;
+
+    template < typename Enum >
+    using traits_t = typename traits<Enum>::type;
+
+    template < typename Enum >
+    using underlying_type = typename traits_t<Enum>::underlying_type;
+
+    template < typename Enum >
+    constexpr std::size_t size() noexcept {
+        return traits_t<Enum>::size;
+    }
+
+    template < typename Enum >
+    constexpr const std::array<Enum, size<Enum>()>& values() noexcept {
+        return traits_t<Enum>::values;
+    }
+
+    template < typename Enum >
+    constexpr const std::array<std::string_view, size<Enum>()>& names() noexcept {
+        return traits_t<Enum>::names;
+    }
+
+    template < typename Enum >
+    constexpr typename traits_t<Enum>::underlying_type to_underlying(Enum e) noexcept {
+        return traits_t<Enum>::to_underlying(e);
+    }
+
+    template < typename Enum >
+    constexpr std::optional<std::string_view> to_string(Enum e) noexcept {
+        return traits_t<Enum>::to_string(e);
+    }
+
+    template < typename Enum >
+    constexpr std::string_view to_string_or_empty(Enum e) noexcept {
+        return traits_t<Enum>::to_string_or_empty(e);
+    }
+
+    template < typename Enum >
+    std::string_view to_string_or_throw(Enum e) {
+        return traits_t<Enum>::to_string_or_throw(e);
+    }
+
+    template < typename Enum >
+    constexpr std::optional<Enum> from_string(std::string_view name) noexcept {
+        return traits_t<Enum>::from_string(name);
+    }
+
+    template < typename Enum >
+    constexpr Enum from_string_or_default(std::string_view name, Enum def) noexcept {
+        return traits_t<Enum>::from_string_or_default(name, def);
+    }
+
+    template < typename Enum >
+    Enum from_string_or_throw(std::string_view name) {
+        return traits_t<Enum>::from_string_or_throw(name);
+    }
+
+    template < typename Enum >
+    constexpr std::optional<std::size_t> to_index(Enum e) noexcept {
+        return traits_t<Enum>::to_index(e);
+    }
+
+    template < typename Enum >
+    constexpr std::size_t to_index_or_invalid(Enum e) noexcept {
+        return traits_t<Enum>::to_index_or_invalid(e);
+    }
+
+    template < typename Enum >
+    std::size_t to_index_or_throw(Enum e) {
+        return traits_t<Enum>::to_index_or_throw(e);
+    }
+
+    template < typename Enum >
+    constexpr std::optional<Enum> from_index(std::size_t index) noexcept {
+        return traits_t<Enum>::from_index(index);
+    }
+
+    template < typename Enum >
+    constexpr Enum from_index_or_default(std::size_t index, Enum def) noexcept {
+        return traits_t<Enum>::from_index_or_default(index, def);
+    }
+
+    template < typename Enum >
+    Enum from_index_or_throw(std::size_t index) {
+        return traits_t<Enum>::from_index_or_throw(index);
+    }
 }
 
 namespace enum_hpp::detail
@@ -122,8 +215,14 @@ namespace enum_hpp::detail
     public:\
         using underlying_type = std::underlying_type_t<Enum>;\
         static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
-        static constexpr const Enum values[] = { ENUM_HPP_GENERATE_VALUES(Enum, Fields) };\
-        static constexpr const std::string_view names[] = { ENUM_HPP_GENERATE_NAMES(Fields) };\
+        \
+        static constexpr const std::array<Enum, size> values = {\
+            ENUM_HPP_GENERATE_VALUES(Enum, Fields)\
+        };\
+        \
+        static constexpr const std::array<std::string_view, size> names = {\
+            ENUM_HPP_GENERATE_NAMES(Fields)\
+        };\
     public:\
         static constexpr underlying_type to_underlying(Enum e) noexcept {\
             return static_cast<underlying_type>(e);\
@@ -211,6 +310,16 @@ namespace enum_hpp::detail
             }\
             throw ::enum_hpp::exception(#Enum "_traits::from_index_or_throw(): invalid argument");\
         }\
+    };
+
+//
+// ENUM_HPP_REGISTER_TRAITS
+//
+
+#define ENUM_HPP_REGISTER_TRAITS(Enum)\
+    template <>\
+    struct enum_hpp::traits<Enum> {\
+        using type = Enum##_traits;\
     };
 
 // -----------------------------------------------------------------------------
