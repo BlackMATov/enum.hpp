@@ -53,10 +53,25 @@ namespace some_namespace
         (_181)(_182)(_183)(_184)(_185)(_186)(_187)(_188)(_189)(_190)(_191)(_192)(_193)(_194)(_195)(_196)(_197)(_198)(_199)(_200)
         (_201)(_202)(_203)(_204)(_205)(_206)(_207)(_208)(_209)(_210)(_211)(_212)(_213)(_214)(_215)(_216)(_217)(_218)(_219)(_220)
         (_221)(_222)(_223)(_224)(_225)(_226)(_227)(_228)(_229)(_230)(_231)(_232)(_233)(_234)(_235)(_236)(_237)(_238)(_239)(_240))
+
+    namespace exns
+    {
+        enum class external_enum : unsigned short {
+            a = 10,
+            b,
+            c = a + b
+        };
+
+        ENUM_HPP_TRAITS_DECL(external_enum,
+            (a)
+            (b)
+            (c))
+    }
 }
 
 ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
 ENUM_HPP_REGISTER_TRAITS(some_namespace::numbers)
+ENUM_HPP_REGISTER_TRAITS(some_namespace::exns::external_enum)
 
 TEST_CASE("enum") {
     namespace sn = some_namespace;
@@ -374,4 +389,19 @@ TEST_CASE("enum") {
             STATIC_REQUIRE_FALSE(enum_hpp::from_index<sn::numbers>(100500));
         }
     }
+}
+
+TEST_CASE("external_enum") {
+    using ee = some_namespace::exns::external_enum;
+    STATIC_REQUIRE(std::is_same_v<enum_hpp::underlying_type<ee>, unsigned short>);
+    STATIC_REQUIRE(enum_hpp::size<ee>() == 3);
+
+    STATIC_REQUIRE(enum_hpp::names<ee>()[0] == "a");
+    STATIC_REQUIRE(enum_hpp::names<ee>()[2] == "c");
+
+    STATIC_REQUIRE(enum_hpp::values<ee>()[0] == ee::a);
+    STATIC_REQUIRE(enum_hpp::values<ee>()[2] == ee::c);
+
+    STATIC_REQUIRE(enum_hpp::to_string(ee::c) == "c");
+    STATIC_REQUIRE(enum_hpp::from_string<ee>("b") == ee::b);
 }

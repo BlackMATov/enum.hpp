@@ -148,12 +148,42 @@ namespace some_namespace
 ENUM_HPP_REGISTER_TRAITS(color)
 
 int main() {
+    using color = some_namespace::color;
+
     // to string
     static_assert(enum_hpp::to_string(color::red) == "red");
 
     // from string
     static_assert(enum_hpp::from_string<color>("red") == color::red);
 
+    return 0;
+}
+```
+
+### Adapting external enums
+
+```cpp
+namespace external_ns
+{
+    enum class external_enum : unsigned short {
+        a = 10,
+        b,
+        c = a + b
+    };
+
+    // should be in the same namespace
+    ENUM_HPP_TRAITS_DECL(external_enum,
+        (a)
+        (b)
+        (c))
+}
+
+ENUM_HPP_REGISTER_TRAITS(external_ns::external_enum)
+
+int main() {
+    using ee = external_ns::external_enum;
+    static_assert(enum_hpp::to_string(ee::a) == "a");
+    static_assert(enum_hpp::from_string<ee>("c") == ee::c);
     return 0;
 }
 ```
@@ -170,9 +200,14 @@ ENUM_HPP_DECL(
     /*fields*/)
 
 // declare enum class
-ENUM_HPP_DECL(
+ENUM_HPP_CLASS_DECL(
     /*enum_name*/,
     /*underlying_type*/,
+    /*fields*/)
+
+// declare only traits
+ENUM_HPP_TRAITS_DECL(
+    /*enum_name*/,
     /*fields*/)
 
 struct /*enum_name*/_traits {
