@@ -26,7 +26,7 @@
 ## Requirements
 
 - [gcc](https://www.gnu.org/software/gcc/) **>= 7**
-- [clang](https://clang.llvm.org/) **>= 7.0**
+- [clang](https://clang.llvm.org/) **>= 5.0**
 - [msvc](https://visualstudio.microsoft.com/) **>= 2017**
 
 ## Installation
@@ -63,38 +63,7 @@ enum debug_level : int {
 };
 
 struct debug_level_traits {
-    using underlying_type = int;
-    static constexpr std::size_t size = 3;
-
-    static constexpr const debug_level values[] = {
-        level_info,
-        level_warning,
-        level_warning
-    };
-
-    static constexpr const std::string_view names[] = {
-        "level_info",
-        "level_warning",
-        "level_warning"
-    };
-
-    static constexpr underlying_type to_underlying(debug_level e) noexcept;
-
-    static constexpr std::optional<std::string_view> to_string(debug_level e) noexcept;
-    static constexpr std::string_view to_string_or_empty(Enum e) noexcept;
-    static std::string_view to_string_or_throw(Enum e);
-
-    static constexpr std::optional<debug_level> from_string(std::string_view name) noexcept;
-    static constexpr debug_level from_string_or_default(std::string_view name, debug_level def) noexcept;
-    static debug_level from_string_or_throw(std::string_view name);
-
-    static constexpr std::optional<std::size_t> to_index(debug_level e) noexcept;
-    static constexpr std::size_t to_index_or_invalid(debug_level e) noexcept;
-    static std::size_t to_index_or_throw(debug_level e);
-
-    static constexpr std::optional<debug_level> from_index(std::size_t index) noexcept;
-    static constexpr debug_level from_index_or_default(std::size_t index, debug_level def) noexcept;
-    static debug_level from_index_or_throw(std::size_t index);
+    /*...*/
 };
 ```
 
@@ -115,40 +84,7 @@ enum class color : unsigned {
 };
 
 struct color_traits {
-    using underlying_type = unsigned;
-    static constexpr std::size_t size = 4;
-
-    static constexpr const color values[] = {
-        color::red,
-        color::green,
-        color::blue,
-        color::white
-    };
-
-    static constexpr const std::string_view names[] = {
-        "red",
-        "green",
-        "blue",
-        "white"
-    };
-
-    static constexpr underlying_type to_underlying(color e) noexcept;
-
-    static constexpr std::optional<std::string_view> to_string(color e) noexcept;
-    static constexpr std::string_view to_string_or_empty(Enum e) noexcept;
-    static std::string_view to_string_or_throw(Enum e);
-
-    static constexpr std::optional<color> from_string(std::string_view name) noexcept;
-    static constexpr color from_string_or_default(std::string_view name, color def) noexcept;
-    static color from_string_or_throw(std::string_view name);
-
-    static constexpr std::optional<std::size_t> to_index(color e) noexcept;
-    static constexpr std::size_t to_index_or_invalid(color e) noexcept;
-    static std::size_t to_index_or_throw(color e);
-
-    static constexpr std::optional<color> from_index(std::size_t index) noexcept;
-    static constexpr color from_index_or_default(std::size_t index, color def) noexcept;
-    static color from_index_or_throw(std::size_t index);
+    /*...*/
 };
 ```
 
@@ -193,6 +129,145 @@ int main() {
     } // stdout: red,green,blue,
 
     return 0;
+}
+```
+
+### Generic context
+
+```cpp
+namespace some_namespace
+{
+    ENUM_HPP_CLASS_DECL(color, unsigned,
+        (red = 0xFF0000)
+        (green = 0x00FF00)
+        (blue = 0x0000FF)
+        (white = red | green | blue))
+}
+
+// register traits in global namespace to generic access
+ENUM_HPP_REGISTER_TRAITS(color)
+
+int main() {
+    // to string
+    static_assert(enum_hpp::to_string(color::red) == "red");
+
+    // from string
+    static_assert(enum_hpp::from_string<color>("red") == color::red);
+
+    return 0;
+}
+```
+
+## API
+
+### Enum traits
+
+```cpp
+// declare enum
+ENUM_HPP_DECL(
+    /*enum_name*/,
+    /*underlying_type*/,
+    /*fields*/)
+
+// declare enum class
+ENUM_HPP_DECL(
+    /*enum_name*/,
+    /*underlying_type*/,
+    /*fields*/)
+
+struct /*enum_name*/_traits {
+    using underlying_type = /*underlying_type*/;
+    static constexpr std::size_t size = /*field_count*/;
+
+    static constexpr const std::array</*enum_name*/, /*field_count*/ > values = {
+        /*enum values*/
+    };
+
+    static constexpr const std::array<std::string_view, /*field_count*/> names = {
+        /*enum names*/
+    };
+
+    static constexpr /*underlying_type*/ to_underlying(/*enum_name*/ e) noexcept;
+
+    static constexpr std::optional<std::string_view> to_string(/*enum_name*/ e) noexcept;
+    static constexpr std::string_view to_string_or_empty(/*enum_name*/ e) noexcept;
+    static std::string_view to_string_or_throw(/*enum_name*/ e);
+
+    static constexpr std::optional</*enum_name*/> from_string(std::string_view name) noexcept;
+    static constexpr /*enum_name*/ from_string_or_default(std::string_view name, /*enum_name*/ def) noexcept;
+    static /*enum_name*/ from_string_or_throw(std::string_view name);
+
+    static constexpr std::optional<std::size_t> to_index(/*enum_name*/ e) noexcept;
+    static constexpr std::size_t to_index_or_invalid(/*enum_name*/ e) noexcept;
+    static std::size_t to_index_or_throw(/*enum_name*/ e);
+
+    static constexpr std::optional</*enum_name*/> from_index(std::size_t index) noexcept;
+    static constexpr /*enum_name*/ from_index_or_default(std::size_t index, /*enum_name*/ def) noexcept;
+    static /*enum_name*/ from_index_or_throw(std::size_t index);
+};
+```
+
+### Generic functions
+
+```cpp
+// should be in global namespace
+ENUM_HPP_REGISTER_TRAITS(/*declared_enum_name*/)
+
+namespace enum_hpp
+{
+    template < typename Enum >
+    using traits_t = typename traits<Enum>::type;
+
+    template < typename Enum >
+    using underlying_type = typename traits_t<Enum>::underlying_type;
+
+    template < typename Enum >
+    constexpr std::size_t size() noexcept;
+
+    template < typename Enum >
+    constexpr const std::array<Enum, size<Enum>()>& values() noexcept;
+
+    template < typename Enum >
+    constexpr const std::array<std::string_view, size<Enum>()>& names() noexcept;
+
+    template < typename Enum >
+    constexpr typename traits_t<Enum>::underlying_type to_underlying(Enum e) noexcept;
+
+    template < typename Enum >
+    constexpr std::optional<std::string_view> to_string(Enum e) noexcept;
+
+    template < typename Enum >
+    constexpr std::string_view to_string_or_empty(Enum e) noexcept;
+
+    template < typename Enum >
+    std::string_view to_string_or_throw(Enum e);
+
+    template < typename Enum >
+    constexpr std::optional<Enum> from_string(std::string_view name) noexcept;
+
+    template < typename Enum >
+    constexpr Enum from_string_or_default(std::string_view name, Enum def) noexcept;
+
+    template < typename Enum >
+    Enum from_string_or_throw(std::string_view name);
+
+    template < typename Enum >
+    constexpr std::optional<std::size_t> to_index(Enum e) noexcept;
+
+    template < typename Enum >
+    constexpr std::size_t to_index_or_invalid(Enum e) noexcept;
+
+    template < typename Enum >
+    std::size_t to_index_or_throw(Enum e);
+
+    template < typename Enum >
+    constexpr std::optional<Enum> from_index(std::size_t index) noexcept;
+
+    template < typename Enum >
+    constexpr Enum from_index_or_default(std::size_t index, Enum def) noexcept;
+
+    template < typename Enum >
+    Enum from_index_or_throw(std::size_t index);
 }
 ```
 

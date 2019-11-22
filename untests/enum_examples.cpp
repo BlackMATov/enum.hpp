@@ -21,6 +21,8 @@ namespace
         (white = red | green | blue))
 }
 
+ENUM_HPP_REGISTER_TRAITS(color)
+
 TEST_CASE("examples") {
     SECTION("traits_using") {
         // size
@@ -49,5 +51,13 @@ TEST_CASE("examples") {
         for ( auto n : color_traits::names ) {
             std::cout << n << ",";
         } // stdout: red,green,blue,
+    }
+
+    SECTION("generic_context") {
+        // to string
+        static_assert(enum_hpp::to_string(color::red) == "red");
+
+        // from string
+        static_assert(enum_hpp::from_string<color>("red") == color::red);
     }
 }

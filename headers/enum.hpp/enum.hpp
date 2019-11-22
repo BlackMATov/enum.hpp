@@ -211,7 +211,9 @@ namespace enum_hpp::detail
 #define ENUM_HPP_TRAITS_DECL(Enum, Fields)\
     struct Enum##_traits {\
     private:\
-        enum enum_names_for_this_score_ { ENUM_HPP_GENERATE_ENUM_FIELDS(Fields) };\
+        enum enum_names_for_this_score_ {\
+            ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
+        };\
     public:\
         using underlying_type = std::underlying_type_t<Enum>;\
         static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
