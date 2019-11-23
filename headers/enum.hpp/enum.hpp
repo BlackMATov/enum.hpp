@@ -884,9 +884,8 @@ namespace enum_hpp::detail
 // ENUM_HPP_PP_SEQ_FOR_EACH
 //
 
-#define ENUM_HPP_PP_SEQ_FOR_EACH(m, d, s) ENUM_HPP_PP_SEQ_FOR_EACH_I(m, d, ENUM_HPP_PP_SEQ_SIZE(s), s)
-#define ENUM_HPP_PP_SEQ_FOR_EACH_I(m, d, n, s) ENUM_HPP_PP_SEQ_FOR_EACH_II(m, d, n, s)
-#define ENUM_HPP_PP_SEQ_FOR_EACH_II(m, d, n, s) ENUM_HPP_PP_SEQ_FOR_EACH_ ## n (m, d, s)
+#define ENUM_HPP_PP_SEQ_FOR_EACH(m, d, s)\
+    ENUM_HPP_PP_CAT(ENUM_HPP_PP_SEQ_FOR_EACH_, ENUM_HPP_PP_SEQ_SIZE(s)) (m, d, s)
 
 #define ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s))
 #define ENUM_HPP_PP_SEQ_FOR_EACH_2(m, d, s) m(d, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_1(m, d, ENUM_HPP_PP_SEQ_TAIL(s))
