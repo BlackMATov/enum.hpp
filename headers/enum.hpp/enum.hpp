@@ -155,14 +155,14 @@ namespace enum_hpp::detail
 }
 
 //
-// ENUM_HPP_GENERATE_ENUM_FIELDS
+// ENUM_HPP_GENERATE_FIELDS
 //
 
-#define ENUM_HPP_GENERATE_ENUM_FIELDS_OP(_, x)\
+#define ENUM_HPP_GENERATE_FIELDS_OP(_, x)\
     x,
 
-#define ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
-    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_ENUM_FIELDS_OP, _, Fields)
+#define ENUM_HPP_GENERATE_FIELDS(Fields)\
+    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_FIELDS_OP, _, Fields)
 
 //
 // ENUM_HPP_GENERATE_VALUES
@@ -190,7 +190,7 @@ namespace enum_hpp::detail
 
 #define ENUM_HPP_DECL(Enum, Type, Fields)\
     enum Enum : Type {\
-        ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
+        ENUM_HPP_GENERATE_FIELDS(Fields)\
     };\
     ENUM_HPP_TRAITS_DECL(Enum, Fields)
 
@@ -200,7 +200,7 @@ namespace enum_hpp::detail
 
 #define ENUM_HPP_CLASS_DECL(Enum, Type, Fields)\
     enum class Enum : Type {\
-        ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
+        ENUM_HPP_GENERATE_FIELDS(Fields)\
     };\
     ENUM_HPP_TRAITS_DECL(Enum, Fields)
 
@@ -212,18 +212,18 @@ namespace enum_hpp::detail
     struct Enum##_traits {\
     private:\
         enum enum_names_for_this_score_ {\
-            ENUM_HPP_GENERATE_ENUM_FIELDS(Fields)\
+            ENUM_HPP_GENERATE_FIELDS(Fields)\
         };\
     public:\
         using underlying_type = std::underlying_type_t<Enum>;\
         static constexpr std::size_t size = ENUM_HPP_PP_SEQ_SIZE(Fields);\
         \
         static constexpr const std::array<Enum, size> values = {\
-            ENUM_HPP_GENERATE_VALUES(Enum, Fields)\
+            { ENUM_HPP_GENERATE_VALUES(Enum, Fields) }\
         };\
         \
         static constexpr const std::array<std::string_view, size> names = {\
-            ENUM_HPP_GENERATE_NAMES(Fields)\
+            { ENUM_HPP_GENERATE_NAMES(Fields) }\
         };\
     public:\
         static constexpr underlying_type to_underlying(Enum e) noexcept {\
