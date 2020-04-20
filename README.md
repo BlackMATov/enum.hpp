@@ -145,7 +145,7 @@ namespace some_namespace
 }
 
 // register traits in global namespace to generic access
-ENUM_HPP_REGISTER_TRAITS(color)
+ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
 
 int main() {
     using color = some_namespace::color;

@@ -52,7 +52,8 @@ namespace some_namespace
         (_161)(_162)(_163)(_164)(_165)(_166)(_167)(_168)(_169)(_170)(_171)(_172)(_173)(_174)(_175)(_176)(_177)(_178)(_179)(_180)
         (_181)(_182)(_183)(_184)(_185)(_186)(_187)(_188)(_189)(_190)(_191)(_192)(_193)(_194)(_195)(_196)(_197)(_198)(_199)(_200)
         (_201)(_202)(_203)(_204)(_205)(_206)(_207)(_208)(_209)(_210)(_211)(_212)(_213)(_214)(_215)(_216)(_217)(_218)(_219)(_220)
-        (_221)(_222)(_223)(_224)(_225)(_226)(_227)(_228)(_229)(_230)(_231)(_232)(_233)(_234)(_235)(_236)(_237)(_238)(_239)(_240))
+        (_221)(_222)(_223)(_224)(_225)(_226)(_227)(_228)(_229)(_230)(_231)(_232)(_233)(_234)(_235)(_236)(_237)(_238)(_239)(_240)
+        (_241)(_242)(_243)(_244)(_245)(_246)(_247)(_248)(_249)(_250)(_251)(_252)(_253)(_254)(_255))
 
     namespace exns
     {
@@ -71,6 +72,7 @@ namespace some_namespace
 
 ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
 ENUM_HPP_REGISTER_TRAITS(some_namespace::numbers)
+ENUM_HPP_REGISTER_TRAITS(some_namespace::render::mask)
 ENUM_HPP_REGISTER_TRAITS(some_namespace::exns::external_enum)
 
 TEST_CASE("enum") {
@@ -140,14 +142,19 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(sn::render::mask_traits::size == std::size(sn::render::mask_traits::values));
         }
         {
-            STATIC_REQUIRE(sn::numbers_traits::size == 241u);
+            STATIC_REQUIRE(sn::numbers_traits::size == 256u);
             STATIC_REQUIRE(sn::numbers_traits::size == std::size(sn::numbers_traits::names));
             STATIC_REQUIRE(sn::numbers_traits::size == std::size(sn::numbers_traits::values));
 
-            STATIC_REQUIRE(enum_hpp::size<sn::numbers>() == 241u);
-            STATIC_REQUIRE(enum_hpp::traits_t<sn::numbers>::size == 241u);
-            STATIC_REQUIRE(std::size(enum_hpp::names<sn::numbers>()) == 241u);
-            STATIC_REQUIRE(std::size(enum_hpp::values<sn::numbers>()) == 241u);
+            STATIC_REQUIRE(enum_hpp::size<sn::numbers>() == 256u);
+            STATIC_REQUIRE(enum_hpp::traits_t<sn::numbers>::size == 256u);
+            STATIC_REQUIRE(std::size(enum_hpp::names<sn::numbers>()) == 256u);
+            STATIC_REQUIRE(std::size(enum_hpp::values<sn::numbers>()) == 256u);
+
+            STATIC_REQUIRE(enum_hpp::size<sn::render::mask>() == 4u);
+            STATIC_REQUIRE(enum_hpp::traits_t<sn::render::mask>::size == 4u);
+            STATIC_REQUIRE(std::size(enum_hpp::names<sn::render::mask>()) == 4u);
+            STATIC_REQUIRE(std::size(enum_hpp::values<sn::render::mask>()) == 4u);
         }
     }
 
