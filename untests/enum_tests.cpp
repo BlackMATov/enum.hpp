@@ -54,6 +54,10 @@ namespace some_namespace
         (_201)(_202)(_203)(_204)(_205)(_206)(_207)(_208)(_209)(_210)(_211)(_212)(_213)(_214)(_215)(_216)(_217)(_218)(_219)(_220)
         (_221)(_222)(_223)(_224)(_225)(_226)(_227)(_228)(_229)(_230)(_231)(_232)(_233)(_234)(_235)(_236)(_237)(_238)(_239)(_240))
 
+    ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
+    ENUM_HPP_REGISTER_TRAITS(some_namespace::numbers)
+    ENUM_HPP_REGISTER_TRAITS(some_namespace::render::mask)
+
     namespace exns
     {
         enum class external_enum : unsigned short {
@@ -66,12 +70,10 @@ namespace some_namespace
             (a)
             (b)
             (c))
+
+        ENUM_HPP_REGISTER_TRAITS(external_enum)
     }
 }
-
-ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
-ENUM_HPP_REGISTER_TRAITS(some_namespace::numbers)
-ENUM_HPP_REGISTER_TRAITS(some_namespace::exns::external_enum)
 
 TEST_CASE("enum") {
     namespace sn = some_namespace;
@@ -148,6 +150,11 @@ TEST_CASE("enum") {
             STATIC_REQUIRE(enum_hpp::traits_t<sn::numbers>::size == 241u);
             STATIC_REQUIRE(std::size(enum_hpp::names<sn::numbers>()) == 241u);
             STATIC_REQUIRE(std::size(enum_hpp::values<sn::numbers>()) == 241u);
+
+            STATIC_REQUIRE(enum_hpp::size<sn::render::mask>() == 4u);
+            STATIC_REQUIRE(enum_hpp::traits_t<sn::render::mask>::size == 4u);
+            STATIC_REQUIRE(std::size(enum_hpp::names<sn::render::mask>()) == 4u);
+            STATIC_REQUIRE(std::size(enum_hpp::values<sn::render::mask>()) == 4u);
         }
     }
 

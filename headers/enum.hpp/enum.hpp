@@ -7,6 +7,7 @@
 #pragma once
 
 #include <array>
+#include <utility>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
@@ -27,10 +28,7 @@ namespace enum_hpp
 namespace enum_hpp
 {
     template < typename Enum >
-    struct traits;
-
-    template < typename Enum >
-    using traits_t = typename traits<Enum>::type;
+    using traits_t = decltype(enum_hpp_adl_find_registered_traits(std::declval<Enum>()));
 
     template < typename Enum >
     using underlying_type = typename traits_t<Enum>::underlying_type;
@@ -119,7 +117,7 @@ namespace enum_hpp
 namespace enum_hpp::detail
 {
     template < typename Enum >
-    struct ignore_assign {
+    struct ignore_assign final {
         Enum value;
 
         constexpr explicit ignore_assign(Enum value) noexcept
@@ -229,7 +227,7 @@ namespace enum_hpp::detail
 //
 
 #define ENUM_HPP_TRAITS_DECL(Enum, Fields)\
-    struct Enum##_traits {\
+    struct Enum##_traits final {\
     private:\
         enum enum_names_for_this_score_ {\
             ENUM_HPP_GENERATE_FIELDS(Fields)\
@@ -335,10 +333,7 @@ namespace enum_hpp::detail
 //
 
 #define ENUM_HPP_REGISTER_TRAITS(Enum)\
-    template <>\
-    struct enum_hpp::traits<Enum> {\
-        using type = Enum##_traits;\
-    };
+    [[maybe_unused]] Enum##_traits enum_hpp_adl_find_registered_traits(Enum) noexcept;
 
 // -----------------------------------------------------------------------------
 //
@@ -902,6 +897,7 @@ namespace enum_hpp::detail
 #define ENUM_HPP_PP_SEQ_SIZE_252(_) ENUM_HPP_PP_SEQ_SIZE_253
 #define ENUM_HPP_PP_SEQ_SIZE_253(_) ENUM_HPP_PP_SEQ_SIZE_254
 #define ENUM_HPP_PP_SEQ_SIZE_254(_) ENUM_HPP_PP_SEQ_SIZE_255
+#define ENUM_HPP_PP_SEQ_SIZE_255(_) ENUM_HPP_PP_SEQ_SIZE_256
 
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_0 0
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_1 1
@@ -1159,6 +1155,7 @@ namespace enum_hpp::detail
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_253 253
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_254 254
 # define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_255 255
+# define ENUM_HPP_PP_SEQ_SIZE_ENUM_HPP_PP_SEQ_SIZE_256 256
 
 //
 // ENUM_HPP_PP_SEQ_FOR_EACH
@@ -1422,3 +1419,4 @@ namespace enum_hpp::detail
 #define ENUM_HPP_PP_SEQ_FOR_EACH_253(m, d, i, s) m(d, i, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_252(m, d, ENUM_HPP_PP_INC(i), ENUM_HPP_PP_SEQ_TAIL(s))
 #define ENUM_HPP_PP_SEQ_FOR_EACH_254(m, d, i, s) m(d, i, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_253(m, d, ENUM_HPP_PP_INC(i), ENUM_HPP_PP_SEQ_TAIL(s))
 #define ENUM_HPP_PP_SEQ_FOR_EACH_255(m, d, i, s) m(d, i, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_254(m, d, ENUM_HPP_PP_INC(i), ENUM_HPP_PP_SEQ_TAIL(s))
+#define ENUM_HPP_PP_SEQ_FOR_EACH_256(m, d, i, s) m(d, i, ENUM_HPP_PP_SEQ_HEAD(s)) ENUM_HPP_PP_SEQ_FOR_EACH_255(m, d, ENUM_HPP_PP_INC(i), ENUM_HPP_PP_SEQ_TAIL(s))

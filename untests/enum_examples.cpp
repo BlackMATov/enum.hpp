@@ -19,9 +19,9 @@ namespace
         (green = 0x00FF00)
         (blue = 0x0000FF)
         (white = red | green | blue))
-}
 
-ENUM_HPP_REGISTER_TRAITS(color)
+    ENUM_HPP_REGISTER_TRAITS(color)
+}
 
 TEST_CASE("examples") {
     SECTION("traits_using") {
