@@ -142,10 +142,10 @@ namespace some_namespace
         (green = 0x00FF00)
         (blue = 0x0000FF)
         (white = red | green | blue))
-}
 
-// register traits in global namespace to generic access
-ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
+    // register traits in enum namespace to generic access
+    ENUM_HPP_REGISTER_TRAITS(color)
+}
 
 int main() {
     using color = some_namespace::color;
@@ -176,9 +176,9 @@ namespace external_ns
         (a)
         (b)
         (c))
-}
 
-ENUM_HPP_REGISTER_TRAITS(external_ns::external_enum)
+    ENUM_HPP_REGISTER_TRAITS(external_enum)
+}
 
 int main() {
     using ee = external_ns::external_enum;
@@ -245,7 +245,7 @@ struct /*enum_name*/_traits {
 ### Generic functions
 
 ```cpp
-// should be in global namespace
+// should be in enum namespace
 ENUM_HPP_REGISTER_TRAITS(/*declared_enum_name*/)
 
 namespace enum_hpp

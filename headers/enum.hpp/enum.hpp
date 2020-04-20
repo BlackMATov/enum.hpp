@@ -7,6 +7,7 @@
 #pragma once
 
 #include <array>
+#include <utility>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
@@ -27,10 +28,7 @@ namespace enum_hpp
 namespace enum_hpp
 {
     template < typename Enum >
-    struct traits;
-
-    template < typename Enum >
-    using traits_t = typename traits<Enum>::type;
+    using traits_t = decltype(enum_hpp_adl_find_registered_traits(std::declval<Enum>()));
 
     template < typename Enum >
     using underlying_type = typename traits_t<Enum>::underlying_type;
@@ -335,10 +333,7 @@ namespace enum_hpp::detail
 //
 
 #define ENUM_HPP_REGISTER_TRAITS(Enum)\
-    template <>\
-    struct enum_hpp::traits<Enum> {\
-        using type = Enum##_traits;\
-    };
+    [[maybe_unused]] Enum##_traits enum_hpp_adl_find_registered_traits(Enum) noexcept;
 
 // -----------------------------------------------------------------------------
 //

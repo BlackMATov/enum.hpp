@@ -55,6 +55,10 @@ namespace some_namespace
         (_221)(_222)(_223)(_224)(_225)(_226)(_227)(_228)(_229)(_230)(_231)(_232)(_233)(_234)(_235)(_236)(_237)(_238)(_239)(_240)
         (_241)(_242)(_243)(_244)(_245)(_246)(_247)(_248)(_249)(_250)(_251)(_252)(_253)(_254)(_255))
 
+    ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
+    ENUM_HPP_REGISTER_TRAITS(some_namespace::numbers)
+    ENUM_HPP_REGISTER_TRAITS(some_namespace::render::mask)
+
     namespace exns
     {
         enum class external_enum : unsigned short {
@@ -67,13 +71,10 @@ namespace some_namespace
             (a)
             (b)
             (c))
+
+        ENUM_HPP_REGISTER_TRAITS(external_enum)
     }
 }
-
-ENUM_HPP_REGISTER_TRAITS(some_namespace::color)
-ENUM_HPP_REGISTER_TRAITS(some_namespace::numbers)
-ENUM_HPP_REGISTER_TRAITS(some_namespace::render::mask)
-ENUM_HPP_REGISTER_TRAITS(some_namespace::exns::external_enum)
 
 TEST_CASE("enum") {
     namespace sn = some_namespace;
