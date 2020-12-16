@@ -348,7 +348,9 @@ namespace enum_hpp::detail
 //
 
 #define ENUM_HPP_REGISTER_TRAITS(Enum)\
-    [[maybe_unused]] Enum##_traits enum_hpp_adl_find_registered_traits(Enum) noexcept;
+    constexpr Enum##_traits enum_hpp_adl_find_registered_traits [[maybe_unused]] (Enum) noexcept {\
+        return Enum##_traits{};\
+    }
 
 // -----------------------------------------------------------------------------
 //
