@@ -8,11 +8,10 @@
 
 #include "doctest/doctest.hpp"
 
+#include <iostream>
 #include <iterator>
-#include <string_view>
+#include <string>
 #include <type_traits>
-
-using namespace std::string_view_literals;
 
 namespace
 {
