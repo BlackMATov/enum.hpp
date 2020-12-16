@@ -4,10 +4,9 @@
  * Copyright (C) 2019-2020, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
-#define CATCH_CONFIG_FAST_COMPILE
-#include <catch2/catch.hpp>
-
 #include <enum.hpp/enum.hpp>
+
+#include "doctest/doctest.hpp"
 
 #include <string>
 #include <iostream>
@@ -24,7 +23,7 @@ namespace
 }
 
 TEST_CASE("examples") {
-    SECTION("traits_using") {
+    SUBCASE("traits_using") {
         // size
         static_assert(color_traits::size == 4);
 
@@ -53,7 +52,7 @@ TEST_CASE("examples") {
         } // stdout: red,green,blue,
     }
 
-    SECTION("generic_context") {
+    SUBCASE("generic_context") {
         // to string
         static_assert(enum_hpp::to_string(color::red) == "red");
 
