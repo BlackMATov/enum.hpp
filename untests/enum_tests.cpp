@@ -204,12 +204,16 @@ TEST_CASE("enum") {
 
             STATIC_CHECK_FALSE(sn::color_traits::to_string(sn::color(42)));
             STATIC_CHECK(sn::color_traits::to_string_or_empty(sn::color(42)) == "");
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(sn::color_traits::to_string_or_throw(sn::color(42)), enum_hpp::exception);
+        #endif
 
             STATIC_CHECK(enum_hpp::to_string(sn::color::green) == "green");
             STATIC_CHECK(enum_hpp::to_string_or_empty(sn::color::green) == "green");
             CHECK(enum_hpp::to_string_or_throw(sn::color::green) == "green");
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(enum_hpp::to_string_or_throw(sn::color(42)), enum_hpp::exception);
+        #endif
         }
         {
             STATIC_CHECK(sn::render::mask_traits::to_string(sn::render::mask::none) == "none");
@@ -242,12 +246,16 @@ TEST_CASE("enum") {
 
             STATIC_CHECK_FALSE(sn::numbers_traits::to_string(sn::numbers(100500)));
             STATIC_CHECK(sn::numbers_traits::to_string_or_empty(sn::numbers(100500)) == "");
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(sn::numbers_traits::to_string_or_throw(sn::numbers(100500)), enum_hpp::exception);
+        #endif
 
             STATIC_CHECK(enum_hpp::to_string(sn::_180) == "_180");
             STATIC_CHECK(enum_hpp::to_string_or_empty(sn::_180) == "_180");
             CHECK(enum_hpp::to_string_or_throw(sn::_180) == "_180");
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(enum_hpp::to_string_or_throw(sn::numbers(100500)), enum_hpp::exception);
+        #endif
         }
     }
 
@@ -267,12 +275,16 @@ TEST_CASE("enum") {
 
             STATIC_CHECK_FALSE(sn::color_traits::from_string("42"));
             STATIC_CHECK(sn::color_traits::from_string_or_default("42", sn::color::red) == sn::color::red);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(sn::color_traits::from_string_or_throw("42"), enum_hpp::exception);
+        #endif
 
             STATIC_CHECK(enum_hpp::from_string<sn::color>("green") == sn::color::green);
             STATIC_CHECK(enum_hpp::from_string_or_default("green", sn::color::red) == sn::color::green);
             CHECK(enum_hpp::from_string_or_throw<sn::color>("green") == sn::color::green);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(enum_hpp::from_string_or_throw<sn::color>("42"), enum_hpp::exception);
+        #endif
         }
         {
             STATIC_CHECK(sn::render::mask_traits::from_string("none") == sn::render::mask::none);
@@ -308,12 +320,16 @@ TEST_CASE("enum") {
 
             STATIC_CHECK_FALSE(sn::color_traits::to_index(sn::color(42)));
             STATIC_CHECK(sn::color_traits::to_index_or_invalid(sn::color(42)) == enum_hpp::invalid_index);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(sn::color_traits::to_index_or_throw(sn::color(42)), enum_hpp::exception);
+        #endif
 
             STATIC_CHECK(enum_hpp::to_index(sn::color::green) == 1u);
             STATIC_CHECK(enum_hpp::to_index_or_invalid(sn::color::green) == 1u);
             CHECK(enum_hpp::to_index_or_throw(sn::color::green) == 1u);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(enum_hpp::to_index_or_throw(sn::color(42)), enum_hpp::exception);
+        #endif
         }
         {
             STATIC_CHECK(sn::render::mask_traits::to_index(sn::render::mask::none) == 0u);
@@ -346,12 +362,16 @@ TEST_CASE("enum") {
 
             STATIC_CHECK_FALSE(sn::numbers_traits::to_index(sn::numbers(100500)));
             STATIC_CHECK(sn::numbers_traits::to_index_or_invalid(sn::numbers(100500)) == enum_hpp::invalid_index);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(sn::numbers_traits::to_index_or_throw(sn::numbers(100500)), enum_hpp::exception);
+        #endif
 
             STATIC_CHECK(enum_hpp::to_index(sn::_180) == 180u);
             STATIC_CHECK(enum_hpp::to_index_or_invalid(sn::_180) == 180u);
             CHECK(enum_hpp::to_index_or_throw(sn::_180) == 180u);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(enum_hpp::to_index_or_throw(sn::numbers(100500)), enum_hpp::exception);
+        #endif
         }
     }
 
@@ -371,12 +391,16 @@ TEST_CASE("enum") {
 
             STATIC_CHECK_FALSE(sn::color_traits::from_index(42));
             STATIC_CHECK(sn::color_traits::from_index_or_default(42, sn::color::red) == sn::color::red);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(sn::color_traits::from_index_or_throw(42), enum_hpp::exception);
+        #endif
 
             STATIC_CHECK(enum_hpp::from_index<sn::color>(1) == sn::color::green);
             STATIC_CHECK(enum_hpp::from_index_or_default(1, sn::color::red) == sn::color::green);
             CHECK(enum_hpp::from_index_or_throw<sn::color>(1) == sn::color::green);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
             CHECK_THROWS_AS(enum_hpp::from_index_or_throw<sn::color>(42), enum_hpp::exception);
+        #endif
         }
         {
             STATIC_CHECK(sn::render::mask_traits::from_index(0) == sn::render::mask::none);

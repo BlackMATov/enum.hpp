@@ -7,11 +7,17 @@
 #pragma once
 
 #include <array>
-#include <utility>
+#include <cstddef>
+#include <cstdlib>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
 #include <type_traits>
+#include <utility>
+
+#if !defined(__cpp_exceptions) && !defined(__EXCEPTIONS) && !defined(_CPPUNWIND)
+#  define ENUM_HPP_NO_EXCEPTIONS
+#endif
 
 namespace enum_hpp
 {
@@ -116,6 +122,15 @@ namespace enum_hpp
 
 namespace enum_hpp::detail
 {
+    inline void throw_exception_with [[noreturn]] (const char* what) {
+    #ifndef ENUM_HPP_NO_EXCEPTIONS
+        throw ::enum_hpp::exception(what);
+    #else
+        (void)what;
+        std::abort();
+    #endif
+    }
+
     template < typename Enum >
     struct ignore_assign final {
         Enum value;
@@ -264,7 +279,7 @@ namespace enum_hpp::detail
             if ( auto s = to_string(e) ) {\
                 return *s;\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::to_string_or_throw(): invalid argument");\
+            ::enum_hpp::detail::throw_exception_with(#Enum "_traits::to_string_or_throw(): invalid argument");\
         }\
         \
         static constexpr std::optional<Enum> from_string(std::string_view name) noexcept {\
@@ -285,7 +300,7 @@ namespace enum_hpp::detail
             if ( auto e = from_string(name) ) {\
                 return *e;\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::from_string_or_throw(): invalid argument");\
+            ::enum_hpp::detail::throw_exception_with(#Enum "_traits::from_string_or_throw(): invalid argument");\
         }\
         \
         static constexpr std::optional<std::size_t> to_index(Enum e) noexcept {\
@@ -305,7 +320,7 @@ namespace enum_hpp::detail
             if ( auto i = to_index(e) ) {\
                 return *i;\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::to_index_or_throw(): invalid argument");\
+            ::enum_hpp::detail::throw_exception_with(#Enum "_traits::to_index_or_throw(): invalid argument");\
         }\
         \
         static constexpr std::optional<Enum> from_index(std::size_t index) noexcept {\
@@ -324,7 +339,7 @@ namespace enum_hpp::detail
             if ( auto e = from_index(index) ) {\
                 return *e;\
             }\
-            throw ::enum_hpp::exception(#Enum "_traits::from_index_or_throw(): invalid argument");\
+            ::enum_hpp::detail::throw_exception_with(#Enum "_traits::from_index_or_throw(): invalid argument");\
         }\
     };
 
