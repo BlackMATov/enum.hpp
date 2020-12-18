@@ -48,15 +48,22 @@ target_link_libraries(your_project_target enum.hpp)
 
 ## Examples
 
-### Declarations
+- [Enum declarations](#Enum-declarations)
+- [Traits using](#Traits-using)
+- [Generic context](#Generic-context)
+- [Adapting external enums](#Adapting-external-enums)
+
+### Enum declarations
 
 ```cpp
+// declaration of unscoped enumeration `debug_level` with traits
+
 ENUM_HPP_DECL(debug_level, int,
     (level_info)
     (level_warning)
     (level_error))
 
-// equivalent to:
+/* equivalent to:
 
 enum debug_level : int {
     level_info,
@@ -65,18 +72,20 @@ enum debug_level : int {
 };
 
 struct debug_level_traits {
-    /*...*/
-};
+    ...
+};*/
 ```
 
 ```cpp
+// declaration of scoped enumeration `color` with traits
+
 ENUM_HPP_CLASS_DECL(color, unsigned,
     (red = 1 << 0)
     (green = 1 << 1)
     (blue = 1 << 2)
     (white = red | green | blue))
 
-// equivalent to:
+/* equivalent to:
 
 enum class color : unsigned {
     red = 1 << 0,
@@ -86,8 +95,8 @@ enum class color : unsigned {
 };
 
 struct color_traits {
-    /*...*/
-};
+    ...
+};*/
 ```
 
 ### Traits using
@@ -126,7 +135,7 @@ int main() {
     static_assert(color_traits::from_index(42) == std::nullopt);
 
     // names
-    for ( auto n : color_traits::names ) {
+    for ( std::string_view n : color_traits::names ) {
         std::cout << n << ",";
     } // stdout: red,green,blue,
 
@@ -192,22 +201,25 @@ int main() {
 
 ## API
 
+- [Enum traits](#Enum-traits)
+- [Generic functions](#Generic-functions)
+
 ### Enum traits
 
 ```cpp
-// declare enum
+// declare unscoped enumeration
 ENUM_HPP_DECL(
     /*enum_name*/,
     /*underlying_type*/,
     /*fields*/)
 
-// declare enum class
+// declare scoped enumeration
 ENUM_HPP_CLASS_DECL(
     /*enum_name*/,
     /*underlying_type*/,
     /*fields*/)
 
-// declare only traits
+// declare only traits for external enumerations
 ENUM_HPP_TRAITS_DECL(
     /*enum_name*/,
     /*fields*/)
