@@ -143,18 +143,18 @@ namespace enum_hpp::bitflags
 
     template < typename Enum
              , std::enable_if_t<std::is_enum_v<Enum>, int> = 0 >
-    constexpr bool all_of(Enum l, Enum r) noexcept {
-        return all_of(bitflags{l}, bitflags{r});
+    constexpr bool all_of(Enum flags, Enum mask) noexcept {
+        return all_of(bitflags{flags}, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool all_of(Enum l, bitflags<Enum> r) noexcept {
-        return all_of(bitflags{l}, r);
+    constexpr bool all_of(Enum flags, bitflags<Enum> mask) noexcept {
+        return all_of(bitflags{flags}, mask);
     }
 
     template < typename Enum >
-    constexpr bool all_of(bitflags<Enum> l, Enum r) noexcept {
-        return all_of(l, bitflags{r});
+    constexpr bool all_of(bitflags<Enum> flags, Enum mask) noexcept {
+        return all_of(flags, bitflags{mask});
     }
 
     template < typename Enum >
@@ -168,24 +168,24 @@ namespace enum_hpp::bitflags
 
     template < typename Enum
              , std::enable_if_t<std::is_enum_v<Enum>, int> = 0 >
-    constexpr bool any_of(Enum l, Enum r) noexcept {
-        return any_of(bitflags{l}, bitflags{r});
+    constexpr bool any_of(Enum flags, Enum mask) noexcept {
+        return any_of(bitflags{flags}, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool any_of(Enum l, bitflags<Enum> r) noexcept {
-        return any_of(bitflags{l}, r);
+    constexpr bool any_of(Enum flags, bitflags<Enum> mask) noexcept {
+        return any_of(bitflags{flags}, mask);
     }
 
     template < typename Enum >
-    constexpr bool any_of(bitflags<Enum> l, Enum r) noexcept {
-        return any_of(l, bitflags{r});
+    constexpr bool any_of(bitflags<Enum> flags, Enum mask) noexcept {
+        return any_of(flags, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool any_of(bitflags<Enum> l, bitflags<Enum> r) noexcept {
-        return r.as_raw() == 0
-            || (l.as_raw() & r.as_raw()) != 0;
+    constexpr bool any_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept {
+        return mask.as_raw() == 0
+            || (flags.as_raw() & mask.as_raw()) != 0;
     }
 
     //
@@ -194,24 +194,24 @@ namespace enum_hpp::bitflags
 
     template < typename Enum
              , std::enable_if_t<std::is_enum_v<Enum>, int> = 0 >
-    constexpr bool none_of(Enum l, Enum r) noexcept {
-        return none_of(bitflags{l}, bitflags{r});
+    constexpr bool none_of(Enum flags, Enum mask) noexcept {
+        return none_of(bitflags{flags}, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool none_of(Enum l, bitflags<Enum> r) noexcept {
-        return none_of(bitflags{l}, r);
+    constexpr bool none_of(Enum flags, bitflags<Enum> mask) noexcept {
+        return none_of(bitflags{flags}, mask);
     }
 
     template < typename Enum >
-    constexpr bool none_of(bitflags<Enum> l, Enum r) noexcept {
-        return none_of(l, bitflags{r});
+    constexpr bool none_of(bitflags<Enum> flags, Enum mask) noexcept {
+        return none_of(flags, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool none_of(bitflags<Enum> l, bitflags<Enum> r) noexcept {
-        return r.as_raw() != 0
-            && (l.as_raw() & r.as_raw()) == 0;
+    constexpr bool none_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept {
+        return mask.as_raw() != 0
+            && (flags.as_raw() & mask.as_raw()) == 0;
     }
 
     //
@@ -220,23 +220,23 @@ namespace enum_hpp::bitflags
 
     template < typename Enum
              , std::enable_if_t<std::is_enum_v<Enum>, int> = 0 >
-    constexpr bool any_except(Enum l, Enum r) noexcept {
-        return any_except(bitflags{l}, bitflags{r});
+    constexpr bool any_except(Enum flags, Enum mask) noexcept {
+        return any_except(bitflags{flags}, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool any_except(Enum l, bitflags<Enum> r) noexcept {
-        return any_except(bitflags{l}, r);
+    constexpr bool any_except(Enum flags, bitflags<Enum> mask) noexcept {
+        return any_except(bitflags{flags}, mask);
     }
 
     template < typename Enum >
-    constexpr bool any_except(bitflags<Enum> l, Enum r) noexcept {
-        return any_except(l, bitflags{r});
+    constexpr bool any_except(bitflags<Enum> flags, Enum mask) noexcept {
+        return any_except(flags, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool any_except(bitflags<Enum> l, bitflags<Enum> r) noexcept {
-        return any_of(l, ~r);
+    constexpr bool any_except(bitflags<Enum> flags, bitflags<Enum> mask) noexcept {
+        return any_of(flags, ~mask);
     }
 
     //
@@ -245,23 +245,23 @@ namespace enum_hpp::bitflags
 
     template < typename Enum
              , std::enable_if_t<std::is_enum_v<Enum>, int> = 0 >
-    constexpr bool none_except(Enum l, Enum r) noexcept {
-        return none_except(bitflags{l}, bitflags{r});
+    constexpr bool none_except(Enum flags, Enum mask) noexcept {
+        return none_except(bitflags{flags}, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool none_except(Enum l, bitflags<Enum> r) noexcept {
-        return none_except(bitflags{l}, r);
+    constexpr bool none_except(Enum flags, bitflags<Enum> mask) noexcept {
+        return none_except(bitflags{flags}, mask);
     }
 
     template < typename Enum >
-    constexpr bool none_except(bitflags<Enum> l, Enum r) noexcept {
-        return none_except(l, bitflags{r});
+    constexpr bool none_except(bitflags<Enum> flags, Enum mask) noexcept {
+        return none_except(flags, bitflags{mask});
     }
 
     template < typename Enum >
-    constexpr bool none_except(bitflags<Enum> l, bitflags<Enum> r) noexcept {
-        return none_of(l, ~r);
+    constexpr bool none_except(bitflags<Enum> flags, bitflags<Enum> mask) noexcept {
+        return none_of(flags, ~mask);
     }
 }
 

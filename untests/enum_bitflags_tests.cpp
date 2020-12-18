@@ -33,6 +33,26 @@ TEST_CASE("enum_bitflags") {
         STATIC_CHECK((access::read_write ^ access::write) == bf::bitflags<access>(0x1));
     }
 
+    SUBCASE("logic_operators") {
+        STATIC_CHECK(bf::bitflags{access::read} < bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} < bf::bitflags{access::read});
+        STATIC_CHECK(bf::bitflags{access::read} <= bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} <= bf::bitflags{access::read});
+        STATIC_CHECK(bf::bitflags{access::write} <= bf::bitflags{access::write});
+
+        STATIC_CHECK(bf::bitflags{access::write} > bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} > bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::write} >= bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::read} >= bf::bitflags{access::read});
+
+        STATIC_CHECK(bf::bitflags{access::read} == bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} == bf::bitflags{access::write});
+
+        STATIC_CHECK(bf::bitflags{access::read} != bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} != bf::bitflags{access::read});
+    }
+
     SUBCASE("bitflags_operators") {
         STATIC_CHECK(0xFE == ~bf::bitflags{access::read});
         STATIC_CHECK(~bf::bitflags{access::read} == 0xFE);
