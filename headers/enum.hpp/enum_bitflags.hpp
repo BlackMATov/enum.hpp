@@ -6,7 +6,9 @@
 
 #pragma once
 
+#include <functional>
 #include <type_traits>
+#include <utility>
 
 namespace enum_hpp::bitflags
 {
@@ -20,6 +22,11 @@ namespace enum_hpp::bitflags
         bitflags() = default;
         bitflags(const bitflags&) = default;
         bitflags& operator=(const bitflags&) = default;
+
+        constexpr void swap(bitflags& other) noexcept {
+            using std::swap;
+            swap(flags_, other.flags_);
+        }
 
         constexpr bitflags(enum_type flags)
         : flags_(static_cast<underlying_type>(flags)) {}
@@ -59,6 +66,21 @@ namespace enum_hpp::bitflags
         }
     private:
         underlying_type flags_{};
+    };
+
+    template < typename Enum >
+    constexpr void swap(bitflags<Enum>& l, bitflags<Enum>& r) noexcept {
+        l.swap(r);
+    }
+}
+
+namespace std
+{
+    template < typename Enum >
+    struct hash<enum_hpp::bitflags::bitflags<Enum>> {
+        size_t operator()(enum_hpp::bitflags::bitflags<Enum> bf) const noexcept {
+            return hash<Enum>{}(bf.as_enum());
+        }
     };
 }
 

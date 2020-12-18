@@ -60,6 +60,30 @@ TEST_CASE("enum_bitflags") {
         }
     }
 
+    SUBCASE("swap") {
+        {
+            bf::bitflags f = access::read | access::write;
+            bf::bitflags g = access::write | access::execute;
+            f.swap(g);
+            CHECK(f == (access::write | access::execute));
+            CHECK(g == (access::read | access::write));
+        }
+        {
+            bf::bitflags f = access::read | access::write;
+            bf::bitflags g = access::write | access::execute;
+            swap(f, g);
+            CHECK(f == (access::write | access::execute));
+            CHECK(g == (access::read | access::write));
+        }
+    }
+
+    SUBCASE("hash") {
+        std::hash<bf::bitflags<access>> hasher1;
+        std::hash<bf::bitflags<access>> hasher2;
+        CHECK(hasher1(access::read) == hasher2(access::read));
+        CHECK(hasher1(access::read) != hasher2(access::read_write));
+    }
+
     SUBCASE("enum_operators") {
         STATIC_CHECK((~access::read) == bf::bitflags<access>(0xFE));
         STATIC_CHECK((access::read | access::write) == bf::bitflags<access>(0x3));
