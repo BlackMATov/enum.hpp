@@ -22,7 +22,7 @@ namespace
         all = read_write | execute
     };
 
-    ENUM_HPP_REGISTER_BITFLAGS_OPERATORS(access)
+    ENUM_HPP_OPERATORS_DECL(access)
 }
 
 TEST_CASE("enum_bitflags") {

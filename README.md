@@ -201,29 +201,36 @@ int main() {
 
 ## API
 
-- [Enum traits](#Enum-traits)
-- [Generic functions](#Generic-functions)
+- `enum.hpp`
+  - [Enum traits](#Enum-traits)
+  - [Enum generic functions](#Enum-generic-functions)
+- `enum_bitflags.hpp`
+  - [Enum bitflags](#Enum-bitflags)
+  - [Enum operators](#Enum-operators)
+  - [Enum bitflags operators](#Enum-bitflags-operators)
+  - [Enum bitflags functions](#Enum-bitflags-functions)
 
 ### Enum traits
 
 ```cpp
-// declare unscoped enumeration
+// declares unscoped enumeration
 ENUM_HPP_DECL(
     /*enum_name*/,
     /*underlying_type*/,
     /*fields*/)
 
-// declare scoped enumeration
+// declares scoped enumeration
 ENUM_HPP_CLASS_DECL(
     /*enum_name*/,
     /*underlying_type*/,
     /*fields*/)
 
-// declare only traits for external enumerations
+// declares only traits for external enumerations
 ENUM_HPP_TRAITS_DECL(
     /*enum_name*/,
     /*fields*/)
 
+// declared enumeration traits
 struct /*enum_name*/_traits {
     using enum_type = /*enum_name*/;
     using underlying_type = /*underlying_type*/;
@@ -257,7 +264,7 @@ struct /*enum_name*/_traits {
 };
 ```
 
-### Generic functions
+### Enum generic functions
 
 ```cpp
 // should be in enum namespace
@@ -318,6 +325,202 @@ namespace enum_hpp
 
     template < typename Enum >
     Enum from_index_or_throw(std::size_t index);
+}
+```
+
+### Enum bitflags
+
+```cpp
+namespace enum_hpp::bitflags
+{
+    template < typename Enum >
+    class bitflags final {
+    public:
+        using enum_type = Enum;
+        using underlying_type = std::underlying_type_t<Enum>;
+
+        bitflags() = default;
+        bitflags(const bitflags&) = default;
+        bitflags& operator=(const bitflags&) = default;
+
+        constexpr bitflags(enum_type flags);
+        constexpr explicit bitflags(underlying_type flags);
+
+        constexpr void swap(bitflags& other) noexcept;
+        constexpr explicit operator bool() const noexcept;
+
+        constexpr underlying_type as_raw() const noexcept;
+        constexpr enum_type as_enum() const noexcept;
+
+        constexpr bool has(bitflags flags) const noexcept;
+        constexpr bitflags& set(bitflags flags) noexcept;
+        constexpr bitflags& toggle(bitflags flags) noexcept;
+        constexpr bitflags& clear(bitflags flags) noexcept;
+    };
+
+    template < typename Enum >
+    constexpr void swap(bitflags<Enum>& l, bitflags<Enum>& r) noexcept;
+}
+
+namespace std
+{
+    template < typename Enum >
+    struct hash<enum_hpp::bitflags::bitflags<Enum>> {
+        size_t operator()(enum_hpp::bitflags::bitflags<Enum> bf) const noexcept;
+    };
+}
+```
+
+### Enum operators
+
+```cpp
+// declares enumeration operators
+ENUM_HPP_OPERATORS_DECL(/*enum_name*/)
+
+// declared enumeration operators
+constexpr bitflags<Enum> operator ~ (/*enum_name*/ l) noexcept;
+constexpr bitflags<Enum> operator | (/*enum_name*/ l, /*enum_name*/ r) noexcept;
+constexpr bitflags<Enum> operator & (/*enum_name*/ l, /*enum_name*/ r) noexcept;
+constexpr bitflags<Enum> operator ^ (/*enum_name*/ l, /*enum_name*/ r) noexcept;
+```
+
+### Enum bitflags operators
+
+```cpp
+namespace enum_hpp::bitflags
+{
+    template < typename Enum >
+    constexpr bool operator < (Enum l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (bitflags<Enum> l, Enum r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (std::underlying_type_t<Enum> l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (bitflags<Enum> l, std::underlying_type_t<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (bitflags<Enum> l, bitflags<Enum> r) noexcept;
+
+    // and also for other comparison operators (<, >, <=, >=, ==, !=)
+}
+
+namespace enum_hpp::bitflags
+{
+    template < typename Enum >
+    constexpr bitflags<Enum> operator ~ (bitflags<Enum> l) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum> operator | (Enum l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum> operator | (bitflags<Enum> l, Enum r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum> operator | (bitflags<Enum> l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum>& operator |= (bitflags<Enum>& l, Enum r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum>& operator |= (bitflags<Enum>& l, bitflags<Enum> r) noexcept;
+
+    // and also for other bitwise logic operators (|, |=, &, &=, ^, ^=)
+}
+```
+
+### Enum bitflags functions
+
+```cpp
+namespace enum_hpp::bitflags
+{
+    // any
+
+    template < enum Enum >
+    constexpr bool any(Enum flags) noexcept;
+
+    template < typename Enum >
+    constexpr bool any(bitflags<Enum> flags) noexcept;
+
+    // none
+
+    template < enum Enum >
+    constexpr bool none(Enum flags) noexcept;
+
+    template < typename Enum >
+    constexpr bool none(bitflags<Enum> flags) noexcept;
+
+    // all_of
+
+    template < enum Enum >
+    constexpr bool all_of(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool all_of(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool all_of(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool all_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // any_of
+
+    template < enum Enum >
+    constexpr bool any_of(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_of(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_of(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // none_of
+
+    template < enum Enum >
+    constexpr bool none_of(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_of(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_of(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // any_except
+
+    template < enum Enum >
+    constexpr bool any_except(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_except(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_except(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_except(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // none_except
+
+    template < enum Enum >
+    constexpr bool none_except(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_except(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_except(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_except(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
 }
 ```
 

@@ -13,7 +13,7 @@
 namespace enum_hpp::bitflags
 {
     template < typename Enum >
-    class bitflags {
+    class bitflags final {
         static_assert(std::is_enum_v<Enum>);
     public:
         using enum_type = Enum;
@@ -23,16 +23,16 @@ namespace enum_hpp::bitflags
         bitflags(const bitflags&) = default;
         bitflags& operator=(const bitflags&) = default;
 
-        constexpr void swap(bitflags& other) noexcept {
-            using std::swap;
-            swap(flags_, other.flags_);
-        }
-
         constexpr bitflags(enum_type flags)
         : flags_(static_cast<underlying_type>(flags)) {}
 
         constexpr explicit bitflags(underlying_type flags)
         : flags_(flags) {}
+
+        constexpr void swap(bitflags& other) noexcept {
+            using std::swap;
+            swap(flags_, other.flags_);
+        }
 
         constexpr explicit operator bool() const noexcept {
             return !!flags_;
@@ -311,10 +311,10 @@ namespace enum_hpp::bitflags
 }
 
 //
-// ENUM_HPP_REGISTER_BITFLAGS_OPERATORS
+// ENUM_HPP_OPERATORS_DECL
 //
 
-#define ENUM_HPP_REGISTER_BITFLAGS_OPERATORS(Enum)\
+#define ENUM_HPP_OPERATORS_DECL(Enum)\
     constexpr ::enum_hpp::bitflags::bitflags<Enum> operator~ [[maybe_unused]] (Enum l) noexcept {\
         return ~::enum_hpp::bitflags::bitflags(l);\
     }\
