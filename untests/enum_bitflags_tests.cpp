@@ -34,22 +34,92 @@ TEST_CASE("enum_bitflags") {
     }
 
     SUBCASE("logic_operators") {
+        STATIC_CHECK(0x1 < bf::bitflags{access::write});
+        STATIC_CHECK(access::read < bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::read} < 0x2);
+        STATIC_CHECK(bf::bitflags{access::read} < access::write);
         STATIC_CHECK(bf::bitflags{access::read} < bf::bitflags{access::write});
+
+        STATIC_CHECK_FALSE(0x2 < bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(access::write < bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} < 0x1);
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} < access::read);
         STATIC_CHECK_FALSE(bf::bitflags{access::write} < bf::bitflags{access::read});
+
+        STATIC_CHECK(0x1 <= bf::bitflags{access::write});
+        STATIC_CHECK(access::read <= bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::read} <= 0x2);
+        STATIC_CHECK(bf::bitflags{access::read} <= access::write);
         STATIC_CHECK(bf::bitflags{access::read} <= bf::bitflags{access::write});
+
+        STATIC_CHECK_FALSE(0x2 <= bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(access::write <= bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} <= 0x1);
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} <= access::read);
         STATIC_CHECK_FALSE(bf::bitflags{access::write} <= bf::bitflags{access::read});
+
+        STATIC_CHECK(0x2 <= bf::bitflags{access::write});
+        STATIC_CHECK(access::write <= bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::write} <= 0x2);
+        STATIC_CHECK(bf::bitflags{access::write} <= access::write);
         STATIC_CHECK(bf::bitflags{access::write} <= bf::bitflags{access::write});
 
-        STATIC_CHECK(bf::bitflags{access::write} > bf::bitflags{access::read});
-        STATIC_CHECK_FALSE(bf::bitflags{access::read} > bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::write} >= bf::bitflags{access::read});
-        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::read} >= bf::bitflags{access::read});
+        //
 
+        STATIC_CHECK_FALSE(0x1 > bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(access::read > bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} > 0x2);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} > access::write);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} > bf::bitflags{access::write});
+
+        STATIC_CHECK(0x2 > bf::bitflags{access::read});
+        STATIC_CHECK(access::write > bf::bitflags{access::read});
+        STATIC_CHECK(bf::bitflags{access::write} > 0x1);
+        STATIC_CHECK(bf::bitflags{access::write} > access::read);
+        STATIC_CHECK(bf::bitflags{access::write} > bf::bitflags{access::read});
+
+        STATIC_CHECK_FALSE(0x1 >= bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(access::read >= bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= 0x2);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= access::write);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= bf::bitflags{access::write});
+
+        STATIC_CHECK(0x2 >= bf::bitflags{access::read});
+        STATIC_CHECK(access::write >= bf::bitflags{access::read});
+        STATIC_CHECK(bf::bitflags{access::write} >= 0x1);
+        STATIC_CHECK(bf::bitflags{access::write} >= access::read);
+        STATIC_CHECK(bf::bitflags{access::write} >= bf::bitflags{access::read});
+
+        STATIC_CHECK(0x2 >= bf::bitflags{access::write});
+        STATIC_CHECK(access::write >= bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::write} >= 0x2);
+        STATIC_CHECK(bf::bitflags{access::write} >= access::write);
+        STATIC_CHECK(bf::bitflags{access::write} >= bf::bitflags{access::write});
+
+        //
+
+        STATIC_CHECK(0x1 == bf::bitflags{access::read});
+        STATIC_CHECK(access::read == bf::bitflags{access::read});
+        STATIC_CHECK(bf::bitflags{access::read} == 0x1);
+        STATIC_CHECK(bf::bitflags{access::read} == access::read);
         STATIC_CHECK(bf::bitflags{access::read} == bf::bitflags{access::read});
+
+        STATIC_CHECK_FALSE(0x1 == bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(access::read == bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} == 0x2);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} == access::write);
         STATIC_CHECK_FALSE(bf::bitflags{access::read} == bf::bitflags{access::write});
 
+        STATIC_CHECK(0x1 != bf::bitflags{access::write});
+        STATIC_CHECK(access::read != bf::bitflags{access::write});
+        STATIC_CHECK(bf::bitflags{access::read} != 0x2);
+        STATIC_CHECK(bf::bitflags{access::read} != access::write);
         STATIC_CHECK(bf::bitflags{access::read} != bf::bitflags{access::write});
+
+        STATIC_CHECK_FALSE(0x1 != bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(access::read != bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} != 0x1);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} != access::read);
         STATIC_CHECK_FALSE(bf::bitflags{access::read} != bf::bitflags{access::read});
     }
 

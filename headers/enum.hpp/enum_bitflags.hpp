@@ -17,6 +17,11 @@ namespace enum_hpp::bitflags
         using enum_type = Enum;
         using underlying_type = std::underlying_type_t<Enum>;
 
+        bitflags() = default;
+
+        bitflags(const bitflags&) = default;
+        bitflags& operator=(const bitflags&) = default;
+
         constexpr bitflags(enum_type flags)
         : flags_(static_cast<underlying_type>(flags)) {}
 
@@ -44,11 +49,11 @@ namespace enum_hpp::bitflags
     #define ENUM_HPP_DEFINE_BINARY_OPERATOR(op)\
         template < typename Enum >\
         constexpr bool operator op(Enum l, bitflags<Enum> r) noexcept {\
-            return l op r.as_raw();\
+            return l op r.as_enum();\
         }\
         template < typename Enum >\
         constexpr bool operator op(bitflags<Enum> l, Enum r) noexcept {\
-            return l.as_raw() op r;\
+            return l.as_enum() op r;\
         }\
         template < typename Enum >\
         constexpr bool operator op(std::underlying_type_t<Enum> l, bitflags<Enum> r) noexcept {\
