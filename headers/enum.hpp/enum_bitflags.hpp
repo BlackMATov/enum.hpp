@@ -18,7 +18,6 @@ namespace enum_hpp::bitflags
         using underlying_type = std::underlying_type_t<Enum>;
 
         bitflags() = default;
-
         bitflags(const bitflags&) = default;
         bitflags& operator=(const bitflags&) = default;
 
@@ -38,6 +37,25 @@ namespace enum_hpp::bitflags
 
         constexpr enum_type as_enum() const noexcept {
             return static_cast<enum_type>(flags_);
+        }
+
+        constexpr bool has(bitflags flags) const noexcept {
+            return flags.flags_ == (flags_ & flags.flags_);
+        }
+
+        constexpr bitflags& set(bitflags flags) noexcept {
+            flags_ |= flags.flags_;
+            return *this;
+        }
+
+        constexpr bitflags& toggle(bitflags flags) noexcept {
+            flags_ ^= flags.flags_;
+            return *this;
+        };
+
+        constexpr bitflags& clear(bitflags flags) noexcept {
+            flags_ &= ~flags.flags_;
+            return *this;
         }
     private:
         underlying_type flags_{};

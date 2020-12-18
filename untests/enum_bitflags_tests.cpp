@@ -17,7 +17,9 @@ namespace
         none = 0,
         read = 1 << 0,
         write = 1 << 1,
+        execute = 1 << 2,
         read_write = read | write,
+        all = read_write | execute
     };
 
     ENUM_HPP_REGISTER_BITFLAGS_OPERATORS(access)
@@ -25,6 +27,38 @@ namespace
 
 TEST_CASE("enum_bitflags") {
     namespace bf = enum_hpp::bitflags;
+
+    SUBCASE("ctors") {
+        {
+            constexpr bf::bitflags<access> f;
+            STATIC_CHECK(!f);
+            STATIC_CHECK(f.as_raw() == 0x0);
+            STATIC_CHECK(f.as_enum() == access::none);
+        }
+        {
+            constexpr bf::bitflags f = access::read_write;
+            STATIC_CHECK(!!f);
+            STATIC_CHECK(f.as_raw() == 0x3);
+            STATIC_CHECK(f.as_enum() == access::read_write);
+        }
+        {
+            constexpr bf::bitflags<access> f{0x3};
+            STATIC_CHECK(!!f);
+            STATIC_CHECK(f.as_raw() == 0x3);
+            STATIC_CHECK(f.as_enum() == access::read_write);
+        }
+        {
+            constexpr bf::bitflags f = access::read | access::write;
+            constexpr bf::bitflags g = f;
+            STATIC_CHECK(g.as_raw() == 0x3);
+        }
+        {
+            constexpr bf::bitflags f = access::read | access::write;
+            bf::bitflags<access> g;
+            g = f;
+            CHECK(g.as_raw() == 0x3);
+        }
+    }
 
     SUBCASE("enum_operators") {
         STATIC_CHECK((~access::read) == bf::bitflags<access>(0xFE));
@@ -174,6 +208,71 @@ TEST_CASE("enum_bitflags") {
             bf::bitflags f{access::read_write};
             f ^= bf::bitflags{access::write};
             CHECK(f == 0x1);
+        }
+    }
+
+    SUBCASE("has") {
+        constexpr bf::bitflags f = access::read_write;
+        STATIC_CHECK(f.has(access::read));
+        STATIC_CHECK(f.has(access::read_write));
+        STATIC_CHECK(f.has(access::read | access::write));
+        STATIC_CHECK_FALSE(f.has(access::execute));
+        STATIC_CHECK_FALSE(f.has(access::read | access::execute));
+    }
+
+    SUBCASE("set") {
+        bf::bitflags<access> f;
+        CHECK(&f == &f.set(access::read));
+        CHECK(f.has(access::read));
+        CHECK(&f == &f.set(access::read | access::write));
+        CHECK(f.has(access::read | access::write));
+        CHECK_FALSE(f.has(access::execute));
+    }
+
+    SUBCASE("toggle") {
+        bf::bitflags f = access::read_write;
+
+        CHECK(&f == &f.toggle(access::read));
+        CHECK_FALSE(f.has(access::read));
+        CHECK(f.has(access::write));
+        CHECK_FALSE(f.has(access::execute));
+
+        CHECK(&f == &f.toggle(access::read | access::write));
+        CHECK(f.has(access::read));
+        CHECK_FALSE(f.has(access::write));
+        CHECK_FALSE(f.has(access::execute));
+
+        CHECK(&f == &f.toggle(access::execute));
+        CHECK(f.has(access::read));
+        CHECK_FALSE(f.has(access::write));
+        CHECK(f.has(access::execute));
+    }
+
+    SUBCASE("clear") {
+        {
+            bf::bitflags f = access::all;
+
+            CHECK(&f == &f.clear(access::read));
+            CHECK_FALSE(f.has(access::read));
+            CHECK(f.has(access::write));
+            CHECK(f.has(access::execute));
+
+            CHECK(&f == &f.clear(access::read | access::execute));
+            CHECK_FALSE(f.has(access::read));
+            CHECK(f.has(access::write));
+            CHECK_FALSE(f.has(access::execute));
+        }
+        {
+            bf::bitflags f = access::all;
+            CHECK(&f == &f.clear(access::write | access::execute));
+            CHECK(f.has(access::read));
+            CHECK_FALSE(f.has(access::write));
+            CHECK_FALSE(f.has(access::execute));
+
+            CHECK(&f == &f.clear(access::read | access::execute));
+            CHECK_FALSE(f.has(access::read));
+            CHECK_FALSE(f.has(access::write));
+            CHECK_FALSE(f.has(access::execute));
         }
     }
 
