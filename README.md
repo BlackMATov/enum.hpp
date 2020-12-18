@@ -48,10 +48,14 @@ target_link_libraries(your_project_target enum.hpp)
 
 ## Examples
 
-- [Enum declarations](#Enum-declarations)
-- [Traits using](#Traits-using)
-- [Generic context](#Generic-context)
-- [Adapting external enums](#Adapting-external-enums)
+- `enum.hpp`
+  - [Enum declarations](#Enum-declarations)
+  - [Traits using](#Traits-using)
+  - [Generic context](#Generic-context)
+  - [Adapting external enums](#Adapting-external-enums)
+- `enum_bitflags.hpp`
+  - [Enum bitflags using](#Enum-bitflags-using)
+  - [Additional bitflags functions](#Additional-bitflags-functions)
 
 ### Enum declarations
 
@@ -196,6 +200,86 @@ int main() {
     static_assert(enum_hpp::to_string(ee::a) == "a");
     static_assert(enum_hpp::from_string<ee>("c") == ee::c);
     return 0;
+}
+```
+
+### Enum bitflags using
+
+```cpp
+#include <enum.hpp/enum_bitflags.hpp>
+
+namespace
+{
+    enum class perms : unsigned {
+        execute = 1 << 0,
+        write = 1 << 1,
+        read = 1 << 2,
+    };
+
+    // declares operators for perms enum (~, |, &, ^)
+    ENUM_HPP_OPERATORS_DECL(perms)
+}
+
+int main() {
+    namespace bf = enum_hpp::bitflags;
+
+    // every enum operator returns bitflags<enum> value
+    bf::bitflags flags = perms::read | perms::write;
+
+    // the bitflags class has some member functions for working with bit flags
+    if ( flags.has(perms::write) ) {
+        flags.clear(perms::write);
+    }
+
+    // you can passing other the same type bitflags to these functions
+    flags.set(perms::write | perms::execute);
+
+    // or using bit flags with the usual bit operations but type safe
+    if ( flags & perms::execute ) {
+        flags &= ~perms::execute; // flags.toggle(perms::execute);
+    }
+
+    // or compare them, why not?
+    if ( flags == (perms::read | perms::write) ) {
+        return 0;
+    }
+
+    return 1;
+}
+```
+
+### Additional bitflags functions
+
+```cpp
+#include <enum.hpp/enum_bitflags.hpp>
+
+namespace
+{
+    enum class perms : unsigned {
+        execute = 1 << 0,
+        write = 1 << 1,
+        read = 1 << 2,
+    };
+
+    // declares operators for perms enum (~, |, &, ^)
+    ENUM_HPP_OPERATORS_DECL(perms)
+}
+
+int main() {
+    namespace bf = enum_hpp::bitflags;
+
+    bf::bitflags<perms> flags = perms::read | perms::write;
+
+    // bitflags namespace has many free functions
+    // that can accept both enumerations and bit flags
+
+    if ( bf::any_of(flags, perms::write | perms::execute) ) {
+        // it's writable or executable
+    }
+
+    if ( bf::any_except(flags, perms::write | perms::execute) ) {
+        // and something else :-)
+    }
 }
 ```
 
