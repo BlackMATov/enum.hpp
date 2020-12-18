@@ -213,34 +213,35 @@ ENUM_HPP_TRAITS_DECL(
     /*fields*/)
 
 struct /*enum_name*/_traits {
+    using enum_type = /*enum_name*/;
     using underlying_type = /*underlying_type*/;
     static constexpr std::size_t size = /*field_count*/;
 
-    static constexpr const std::array</*enum_name*/, /*field_count*/ > values = {
+    static constexpr const std::array<enum_type, size> values = {
         /*enum values*/
     };
 
-    static constexpr const std::array<std::string_view, /*field_count*/> names = {
-        /*enum names*/
+    static constexpr const std::array<std::string_view, size> names = {
+        /*enum value names*/
     };
 
-    static constexpr /*underlying_type*/ to_underlying(/*enum_name*/ e) noexcept;
+    static constexpr underlying_type to_underlying(enum_type e) noexcept;
 
-    static constexpr std::optional<std::string_view> to_string(/*enum_name*/ e) noexcept;
-    static constexpr std::string_view to_string_or_empty(/*enum_name*/ e) noexcept;
-    static std::string_view to_string_or_throw(/*enum_name*/ e);
+    static constexpr std::optional<std::string_view> to_string(enum_type e) noexcept;
+    static constexpr std::string_view to_string_or_empty(enum_type e) noexcept;
+    static std::string_view to_string_or_throw(enum_type e);
 
-    static constexpr std::optional</*enum_name*/> from_string(std::string_view name) noexcept;
-    static constexpr /*enum_name*/ from_string_or_default(std::string_view name, /*enum_name*/ def) noexcept;
-    static /*enum_name*/ from_string_or_throw(std::string_view name);
+    static constexpr std::optional<enum_type> from_string(std::string_view name) noexcept;
+    static constexpr enum_type from_string_or_default(std::string_view name, enum_type def) noexcept;
+    static enum_type from_string_or_throw(std::string_view name);
 
-    static constexpr std::optional<std::size_t> to_index(/*enum_name*/ e) noexcept;
-    static constexpr std::size_t to_index_or_invalid(/*enum_name*/ e) noexcept;
-    static std::size_t to_index_or_throw(/*enum_name*/ e);
+    static constexpr std::optional<std::size_t> to_index(enum_type e) noexcept;
+    static constexpr std::size_t to_index_or_invalid(enum_type e) noexcept;
+    static std::size_t to_index_or_throw(enum_type e);
 
-    static constexpr std::optional</*enum_name*/> from_index(std::size_t index) noexcept;
-    static constexpr /*enum_name*/ from_index_or_default(std::size_t index, /*enum_name*/ def) noexcept;
-    static /*enum_name*/ from_index_or_throw(std::size_t index);
+    static constexpr std::optional<enum_type> from_index(std::size_t index) noexcept;
+    static constexpr enum_type from_index_or_default(std::size_t index, enum_type def) noexcept;
+    static enum_type from_index_or_throw(std::size_t index);
 };
 ```
 

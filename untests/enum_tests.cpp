@@ -83,6 +83,10 @@ TEST_CASE("enum") {
                 unsigned>);
 
             STATIC_CHECK(std::is_same_v<
+                sn::color_traits::enum_type,
+                sn::color>);
+
+            STATIC_CHECK(std::is_same_v<
                 sn::color_traits::underlying_type,
                 enum_hpp::underlying_type<sn::color>>);
 
