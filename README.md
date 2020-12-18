@@ -25,6 +25,19 @@
 
 [enum]: https://github.com/BlackMATov/enum.hpp
 
+---
+
+## Content
+
+- [Requirements](#Requirements)
+- [Installation](#Installation)
+- [Examples](#Examples)
+- [API](#API)
+- [Alternatives](#Alternatives)
+- [License](#License-(MIT))
+
+---
+
 ## Requirements
 
 - [gcc](https://www.gnu.org/software/gcc/) **>= 7**
@@ -48,15 +61,26 @@ target_link_libraries(your_project_target enum.hpp)
 
 ## Examples
 
-### Declarations
+- `enum.hpp`
+  - [Enum declarations](#Enum-declarations)
+  - [Traits using](#Traits-using)
+  - [Generic context](#Generic-context)
+  - [Adapting external enums](#Adapting-external-enums)
+- `enum_bitflags.hpp`
+  - [Enum bitflags using](#Enum-bitflags-using)
+  - [Additional bitflags functions](#Additional-bitflags-functions)
+
+### Enum declarations
 
 ```cpp
+// declaration of unscoped enumeration `debug_level` with traits
+
 ENUM_HPP_DECL(debug_level, int,
     (level_info)
     (level_warning)
     (level_error))
 
-// equivalent to:
+/* equivalent to:
 
 enum debug_level : int {
     level_info,
@@ -65,18 +89,20 @@ enum debug_level : int {
 };
 
 struct debug_level_traits {
-    /*...*/
-};
+    ...
+};*/
 ```
 
 ```cpp
+// declaration of scoped enumeration `color` with traits
+
 ENUM_HPP_CLASS_DECL(color, unsigned,
     (red = 1 << 0)
     (green = 1 << 1)
     (blue = 1 << 2)
     (white = red | green | blue))
 
-// equivalent to:
+/* equivalent to:
 
 enum class color : unsigned {
     red = 1 << 0,
@@ -86,8 +112,8 @@ enum class color : unsigned {
 };
 
 struct color_traits {
-    /*...*/
-};
+    ...
+};*/
 ```
 
 ### Traits using
@@ -126,7 +152,7 @@ int main() {
     static_assert(color_traits::from_index(42) == std::nullopt);
 
     // names
-    for ( auto n : color_traits::names ) {
+    for ( std::string_view n : color_traits::names ) {
         std::cout << n << ",";
     } // stdout: red,green,blue,
 
@@ -190,61 +216,152 @@ int main() {
 }
 ```
 
+### Enum bitflags using
+
+```cpp
+#include <enum.hpp/enum_bitflags.hpp>
+
+namespace
+{
+    enum class perms : unsigned {
+        execute = 1 << 0,
+        write = 1 << 1,
+        read = 1 << 2,
+    };
+
+    // declares operators for perms enum (~, |, &, ^)
+    ENUM_HPP_OPERATORS_DECL(perms)
+}
+
+int main() {
+    namespace bf = enum_hpp::bitflags;
+
+    // every enum operator returns bitflags<enum> value
+    bf::bitflags flags = perms::read | perms::write;
+
+    // the bitflags class has some member functions for working with bit flags
+    if ( flags.has(perms::write) ) {
+        flags.clear(perms::write);
+    }
+
+    // you can passing other the same type bitflags to these functions
+    flags.set(perms::write | perms::execute);
+
+    // or using bit flags with the usual bit operations but type safe
+    if ( flags & perms::execute ) {
+        flags &= ~perms::execute; // flags.toggle(perms::execute);
+    }
+
+    // or compare them, why not?
+    if ( flags == (perms::read | perms::write) ) {
+        return 0;
+    }
+
+    return 1;
+}
+```
+
+### Additional bitflags functions
+
+```cpp
+#include <enum.hpp/enum_bitflags.hpp>
+
+namespace
+{
+    enum class perms : unsigned {
+        execute = 1 << 0,
+        write = 1 << 1,
+        read = 1 << 2,
+    };
+
+    // declares operators for perms enum (~, |, &, ^)
+    ENUM_HPP_OPERATORS_DECL(perms)
+}
+
+int main() {
+    namespace bf = enum_hpp::bitflags;
+
+    bf::bitflags<perms> flags = perms::read | perms::write;
+
+    // bitflags namespace has many free functions
+    // that can accept both enumerations and bit flags
+
+    if ( bf::any_of(flags, perms::write | perms::execute) ) {
+        // it's writable or executable
+    }
+
+    if ( bf::any_except(flags, perms::write | perms::execute) ) {
+        // and something else :-)
+    }
+}
+```
+
 ## API
+
+- `enum.hpp`
+  - [Enum traits](#Enum-traits)
+  - [Enum generic functions](#Enum-generic-functions)
+- `enum_bitflags.hpp`
+  - [Enum bitflags](#Enum-bitflags)
+  - [Enum operators](#Enum-operators)
+  - [Enum bitflags operators](#Enum-bitflags-operators)
+  - [Enum bitflags functions](#Enum-bitflags-functions)
 
 ### Enum traits
 
 ```cpp
-// declare enum
+// declares unscoped enumeration
 ENUM_HPP_DECL(
     /*enum_name*/,
     /*underlying_type*/,
     /*fields*/)
 
-// declare enum class
+// declares scoped enumeration
 ENUM_HPP_CLASS_DECL(
     /*enum_name*/,
     /*underlying_type*/,
     /*fields*/)
 
-// declare only traits
+// declares only traits for external enumerations
 ENUM_HPP_TRAITS_DECL(
     /*enum_name*/,
     /*fields*/)
 
+// declared enumeration traits
 struct /*enum_name*/_traits {
+    using enum_type = /*enum_name*/;
     using underlying_type = /*underlying_type*/;
     static constexpr std::size_t size = /*field_count*/;
 
-    static constexpr const std::array</*enum_name*/, /*field_count*/ > values = {
+    static constexpr const std::array<enum_type, size> values = {
         /*enum values*/
     };
 
-    static constexpr const std::array<std::string_view, /*field_count*/> names = {
-        /*enum names*/
+    static constexpr const std::array<std::string_view, size> names = {
+        /*enum value names*/
     };
 
-    static constexpr /*underlying_type*/ to_underlying(/*enum_name*/ e) noexcept;
+    static constexpr underlying_type to_underlying(enum_type e) noexcept;
 
-    static constexpr std::optional<std::string_view> to_string(/*enum_name*/ e) noexcept;
-    static constexpr std::string_view to_string_or_empty(/*enum_name*/ e) noexcept;
-    static std::string_view to_string_or_throw(/*enum_name*/ e);
+    static constexpr std::optional<std::string_view> to_string(enum_type e) noexcept;
+    static constexpr std::string_view to_string_or_empty(enum_type e) noexcept;
+    static std::string_view to_string_or_throw(enum_type e);
 
-    static constexpr std::optional</*enum_name*/> from_string(std::string_view name) noexcept;
-    static constexpr /*enum_name*/ from_string_or_default(std::string_view name, /*enum_name*/ def) noexcept;
-    static /*enum_name*/ from_string_or_throw(std::string_view name);
+    static constexpr std::optional<enum_type> from_string(std::string_view name) noexcept;
+    static constexpr enum_type from_string_or_default(std::string_view name, enum_type def) noexcept;
+    static enum_type from_string_or_throw(std::string_view name);
 
-    static constexpr std::optional<std::size_t> to_index(/*enum_name*/ e) noexcept;
-    static constexpr std::size_t to_index_or_invalid(/*enum_name*/ e) noexcept;
-    static std::size_t to_index_or_throw(/*enum_name*/ e);
+    static constexpr std::optional<std::size_t> to_index(enum_type e) noexcept;
+    static constexpr std::size_t to_index_or_invalid(enum_type e) noexcept;
+    static std::size_t to_index_or_throw(enum_type e);
 
-    static constexpr std::optional</*enum_name*/> from_index(std::size_t index) noexcept;
-    static constexpr /*enum_name*/ from_index_or_default(std::size_t index, /*enum_name*/ def) noexcept;
-    static /*enum_name*/ from_index_or_throw(std::size_t index);
+    static constexpr std::optional<enum_type> from_index(std::size_t index) noexcept;
+    static constexpr enum_type from_index_or_default(std::size_t index, enum_type def) noexcept;
+    static enum_type from_index_or_throw(std::size_t index);
 };
 ```
 
-### Generic functions
+### Enum generic functions
 
 ```cpp
 // should be in enum namespace
@@ -305,6 +422,202 @@ namespace enum_hpp
 
     template < typename Enum >
     Enum from_index_or_throw(std::size_t index);
+}
+```
+
+### Enum bitflags
+
+```cpp
+namespace enum_hpp::bitflags
+{
+    template < typename Enum >
+    class bitflags final {
+    public:
+        using enum_type = Enum;
+        using underlying_type = std::underlying_type_t<Enum>;
+
+        bitflags() = default;
+        bitflags(const bitflags&) = default;
+        bitflags& operator=(const bitflags&) = default;
+
+        constexpr bitflags(enum_type flags);
+        constexpr explicit bitflags(underlying_type flags);
+
+        constexpr void swap(bitflags& other) noexcept;
+        constexpr explicit operator bool() const noexcept;
+
+        constexpr underlying_type as_raw() const noexcept;
+        constexpr enum_type as_enum() const noexcept;
+
+        constexpr bool has(bitflags flags) const noexcept;
+        constexpr bitflags& set(bitflags flags) noexcept;
+        constexpr bitflags& toggle(bitflags flags) noexcept;
+        constexpr bitflags& clear(bitflags flags) noexcept;
+    };
+
+    template < typename Enum >
+    constexpr void swap(bitflags<Enum>& l, bitflags<Enum>& r) noexcept;
+}
+
+namespace std
+{
+    template < typename Enum >
+    struct hash<enum_hpp::bitflags::bitflags<Enum>> {
+        size_t operator()(enum_hpp::bitflags::bitflags<Enum> bf) const noexcept;
+    };
+}
+```
+
+### Enum operators
+
+```cpp
+// declares enumeration operators
+ENUM_HPP_OPERATORS_DECL(/*enum_name*/)
+
+// declared enumeration operators
+constexpr bitflags<Enum> operator ~ (/*enum_name*/ l) noexcept;
+constexpr bitflags<Enum> operator | (/*enum_name*/ l, /*enum_name*/ r) noexcept;
+constexpr bitflags<Enum> operator & (/*enum_name*/ l, /*enum_name*/ r) noexcept;
+constexpr bitflags<Enum> operator ^ (/*enum_name*/ l, /*enum_name*/ r) noexcept;
+```
+
+### Enum bitflags operators
+
+```cpp
+namespace enum_hpp::bitflags
+{
+    template < typename Enum >
+    constexpr bool operator < (Enum l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (bitflags<Enum> l, Enum r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (std::underlying_type_t<Enum> l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (bitflags<Enum> l, std::underlying_type_t<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bool operator < (bitflags<Enum> l, bitflags<Enum> r) noexcept;
+
+    // and also for other comparison operators (<, >, <=, >=, ==, !=)
+}
+
+namespace enum_hpp::bitflags
+{
+    template < typename Enum >
+    constexpr bitflags<Enum> operator ~ (bitflags<Enum> l) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum> operator | (Enum l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum> operator | (bitflags<Enum> l, Enum r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum> operator | (bitflags<Enum> l, bitflags<Enum> r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum>& operator |= (bitflags<Enum>& l, Enum r) noexcept;
+
+    template < typename Enum >
+    constexpr bitflags<Enum>& operator |= (bitflags<Enum>& l, bitflags<Enum> r) noexcept;
+
+    // and also for other bitwise logic operators (|, |=, &, &=, ^, ^=)
+}
+```
+
+### Enum bitflags functions
+
+```cpp
+namespace enum_hpp::bitflags
+{
+    // any
+
+    template < enum Enum >
+    constexpr bool any(Enum flags) noexcept;
+
+    template < typename Enum >
+    constexpr bool any(bitflags<Enum> flags) noexcept;
+
+    // none
+
+    template < enum Enum >
+    constexpr bool none(Enum flags) noexcept;
+
+    template < typename Enum >
+    constexpr bool none(bitflags<Enum> flags) noexcept;
+
+    // all_of
+
+    template < enum Enum >
+    constexpr bool all_of(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool all_of(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool all_of(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool all_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // any_of
+
+    template < enum Enum >
+    constexpr bool any_of(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_of(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_of(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // none_of
+
+    template < enum Enum >
+    constexpr bool none_of(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_of(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_of(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // any_except
+
+    template < enum Enum >
+    constexpr bool any_except(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_except(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_except(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool any_except(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
+
+    // none_except
+
+    template < enum Enum >
+    constexpr bool none_except(Enum flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_except(Enum flags, bitflags<Enum> mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_except(bitflags<Enum> flags, Enum mask) noexcept;
+
+    template < typename Enum >
+    constexpr bool none_except(bitflags<Enum> flags, bitflags<Enum> mask) noexcept;
 }
 ```
 
