@@ -25,6 +25,19 @@
 
 [enum]: https://github.com/BlackMATov/enum.hpp
 
+---
+
+## Content
+
+- [Requirements](#Requirements)
+- [Installation](#Installation)
+- [Examples](#Examples)
+- [API](#API)
+- [Alternatives](#Alternatives)
+- [License](#License-(MIT))
+
+---
+
 ## Requirements
 
 - [gcc](https://www.gnu.org/software/gcc/) **>= 7**
