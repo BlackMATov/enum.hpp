@@ -23,9 +23,9 @@ target_link_libraries(${PROJECT_NAME} enum.hpp)
 target_compile_options(${PROJECT_NAME}
     PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:
-        /W4>
+        /WX /W4>
     PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-        -Wall -Wextra -Wpedantic>)
+        -Werror -Wall -Wextra -Wpedantic>)
 
 add_test(${PROJECT_NAME} ${PROJECT_NAME})

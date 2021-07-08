@@ -32,31 +32,31 @@ TEST_CASE("enum_bitflags") {
         {
             constexpr bf::bitflags<access> f;
             STATIC_CHECK(!f);
-            STATIC_CHECK(f.as_raw() == 0x0);
+            STATIC_CHECK(f.as_raw() == std::uint8_t{0x0});
             STATIC_CHECK(f.as_enum() == access::none);
         }
         {
             constexpr bf::bitflags f = access::read_write;
             STATIC_CHECK(!!f);
-            STATIC_CHECK(f.as_raw() == 0x3);
+            STATIC_CHECK(f.as_raw() == std::uint8_t{0x3});
             STATIC_CHECK(f.as_enum() == access::read_write);
         }
         {
-            constexpr bf::bitflags<access> f{0x3};
+            constexpr bf::bitflags<access> f{std::uint8_t{0x3}};
             STATIC_CHECK(!!f);
-            STATIC_CHECK(f.as_raw() == 0x3);
+            STATIC_CHECK(f.as_raw() == std::uint8_t{0x3});
             STATIC_CHECK(f.as_enum() == access::read_write);
         }
         {
             constexpr bf::bitflags f = access::read | access::write;
             constexpr bf::bitflags g = f;
-            STATIC_CHECK(g.as_raw() == 0x3);
+            STATIC_CHECK(g.as_raw() == std::uint8_t{0x3});
         }
         {
             constexpr bf::bitflags f = access::read | access::write;
             bf::bitflags<access> g;
             g = f;
-            CHECK(g.as_raw() == 0x3);
+            CHECK(g.as_raw() == std::uint8_t{0x3});
         }
     }
 
@@ -92,146 +92,146 @@ TEST_CASE("enum_bitflags") {
     }
 
     SUBCASE("logic_operators") {
-        STATIC_CHECK(0x1 < bf::bitflags{access::write});
+        STATIC_CHECK(std::uint8_t{0x1} < bf::bitflags{access::write});
         STATIC_CHECK(access::read < bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::read} < 0x2);
+        STATIC_CHECK(bf::bitflags{access::read} < std::uint8_t{0x2});
         STATIC_CHECK(bf::bitflags{access::read} < access::write);
         STATIC_CHECK(bf::bitflags{access::read} < bf::bitflags{access::write});
 
-        STATIC_CHECK_FALSE(0x2 < bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(std::uint8_t{0x2} < bf::bitflags{access::read});
         STATIC_CHECK_FALSE(access::write < bf::bitflags{access::read});
-        STATIC_CHECK_FALSE(bf::bitflags{access::write} < 0x1);
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} < std::uint8_t{0x1});
         STATIC_CHECK_FALSE(bf::bitflags{access::write} < access::read);
         STATIC_CHECK_FALSE(bf::bitflags{access::write} < bf::bitflags{access::read});
 
-        STATIC_CHECK(0x1 <= bf::bitflags{access::write});
+        STATIC_CHECK(std::uint8_t{0x1} <= bf::bitflags{access::write});
         STATIC_CHECK(access::read <= bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::read} <= 0x2);
+        STATIC_CHECK(bf::bitflags{access::read} <= std::uint8_t{0x2});
         STATIC_CHECK(bf::bitflags{access::read} <= access::write);
         STATIC_CHECK(bf::bitflags{access::read} <= bf::bitflags{access::write});
 
-        STATIC_CHECK_FALSE(0x2 <= bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(std::uint8_t{0x2} <= bf::bitflags{access::read});
         STATIC_CHECK_FALSE(access::write <= bf::bitflags{access::read});
-        STATIC_CHECK_FALSE(bf::bitflags{access::write} <= 0x1);
+        STATIC_CHECK_FALSE(bf::bitflags{access::write} <= std::uint8_t{0x1});
         STATIC_CHECK_FALSE(bf::bitflags{access::write} <= access::read);
         STATIC_CHECK_FALSE(bf::bitflags{access::write} <= bf::bitflags{access::read});
 
-        STATIC_CHECK(0x2 <= bf::bitflags{access::write});
+        STATIC_CHECK(std::uint8_t{0x2} <= bf::bitflags{access::write});
         STATIC_CHECK(access::write <= bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::write} <= 0x2);
+        STATIC_CHECK(bf::bitflags{access::write} <= std::uint8_t{0x2});
         STATIC_CHECK(bf::bitflags{access::write} <= access::write);
         STATIC_CHECK(bf::bitflags{access::write} <= bf::bitflags{access::write});
 
         //
 
-        STATIC_CHECK_FALSE(0x1 > bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(std::uint8_t{0x1} > bf::bitflags{access::write});
         STATIC_CHECK_FALSE(access::read > bf::bitflags{access::write});
-        STATIC_CHECK_FALSE(bf::bitflags{access::read} > 0x2);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} > std::uint8_t{0x2});
         STATIC_CHECK_FALSE(bf::bitflags{access::read} > access::write);
         STATIC_CHECK_FALSE(bf::bitflags{access::read} > bf::bitflags{access::write});
 
-        STATIC_CHECK(0x2 > bf::bitflags{access::read});
+        STATIC_CHECK(std::uint8_t{0x2} > bf::bitflags{access::read});
         STATIC_CHECK(access::write > bf::bitflags{access::read});
-        STATIC_CHECK(bf::bitflags{access::write} > 0x1);
+        STATIC_CHECK(bf::bitflags{access::write} > std::uint8_t{0x1});
         STATIC_CHECK(bf::bitflags{access::write} > access::read);
         STATIC_CHECK(bf::bitflags{access::write} > bf::bitflags{access::read});
 
-        STATIC_CHECK_FALSE(0x1 >= bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(std::uint8_t{0x1} >= bf::bitflags{access::write});
         STATIC_CHECK_FALSE(access::read >= bf::bitflags{access::write});
-        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= 0x2);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} >= std::uint8_t{0x2});
         STATIC_CHECK_FALSE(bf::bitflags{access::read} >= access::write);
         STATIC_CHECK_FALSE(bf::bitflags{access::read} >= bf::bitflags{access::write});
 
-        STATIC_CHECK(0x2 >= bf::bitflags{access::read});
+        STATIC_CHECK(std::uint8_t{0x2} >= bf::bitflags{access::read});
         STATIC_CHECK(access::write >= bf::bitflags{access::read});
-        STATIC_CHECK(bf::bitflags{access::write} >= 0x1);
+        STATIC_CHECK(bf::bitflags{access::write} >= std::uint8_t{0x1});
         STATIC_CHECK(bf::bitflags{access::write} >= access::read);
         STATIC_CHECK(bf::bitflags{access::write} >= bf::bitflags{access::read});
 
-        STATIC_CHECK(0x2 >= bf::bitflags{access::write});
+        STATIC_CHECK(std::uint8_t{0x2} >= bf::bitflags{access::write});
         STATIC_CHECK(access::write >= bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::write} >= 0x2);
+        STATIC_CHECK(bf::bitflags{access::write} >= std::uint8_t{0x2});
         STATIC_CHECK(bf::bitflags{access::write} >= access::write);
         STATIC_CHECK(bf::bitflags{access::write} >= bf::bitflags{access::write});
 
         //
 
-        STATIC_CHECK(0x1 == bf::bitflags{access::read});
+        STATIC_CHECK(std::uint8_t{0x1} == bf::bitflags{access::read});
         STATIC_CHECK(access::read == bf::bitflags{access::read});
-        STATIC_CHECK(bf::bitflags{access::read} == 0x1);
+        STATIC_CHECK(bf::bitflags{access::read} == std::uint8_t{0x1});
         STATIC_CHECK(bf::bitflags{access::read} == access::read);
         STATIC_CHECK(bf::bitflags{access::read} == bf::bitflags{access::read});
 
-        STATIC_CHECK_FALSE(0x1 == bf::bitflags{access::write});
+        STATIC_CHECK_FALSE(std::uint8_t{0x1} == bf::bitflags{access::write});
         STATIC_CHECK_FALSE(access::read == bf::bitflags{access::write});
-        STATIC_CHECK_FALSE(bf::bitflags{access::read} == 0x2);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} == std::uint8_t{0x2});
         STATIC_CHECK_FALSE(bf::bitflags{access::read} == access::write);
         STATIC_CHECK_FALSE(bf::bitflags{access::read} == bf::bitflags{access::write});
 
-        STATIC_CHECK(0x1 != bf::bitflags{access::write});
+        STATIC_CHECK(std::uint8_t{0x1} != bf::bitflags{access::write});
         STATIC_CHECK(access::read != bf::bitflags{access::write});
-        STATIC_CHECK(bf::bitflags{access::read} != 0x2);
+        STATIC_CHECK(bf::bitflags{access::read} != std::uint8_t{0x2});
         STATIC_CHECK(bf::bitflags{access::read} != access::write);
         STATIC_CHECK(bf::bitflags{access::read} != bf::bitflags{access::write});
 
-        STATIC_CHECK_FALSE(0x1 != bf::bitflags{access::read});
+        STATIC_CHECK_FALSE(std::uint8_t{0x1} != bf::bitflags{access::read});
         STATIC_CHECK_FALSE(access::read != bf::bitflags{access::read});
-        STATIC_CHECK_FALSE(bf::bitflags{access::read} != 0x1);
+        STATIC_CHECK_FALSE(bf::bitflags{access::read} != std::uint8_t{0x1});
         STATIC_CHECK_FALSE(bf::bitflags{access::read} != access::read);
         STATIC_CHECK_FALSE(bf::bitflags{access::read} != bf::bitflags{access::read});
     }
 
     SUBCASE("bitflags_operators") {
-        STATIC_CHECK(0xFE == ~bf::bitflags{access::read});
-        STATIC_CHECK(~bf::bitflags{access::read} == 0xFE);
+        STATIC_CHECK(std::uint8_t{0xFE} == ~bf::bitflags{access::read});
+        STATIC_CHECK(~bf::bitflags{access::read} == std::uint8_t{0xFE});
         STATIC_CHECK(~bf::bitflags{access::read} == bf::bitflags<access>(0xFE));
 
-        STATIC_CHECK((access::write | bf::bitflags{access::read}) == 0x3);
-        STATIC_CHECK((bf::bitflags{access::read} | access::write) == 0x3);
-        STATIC_CHECK((bf::bitflags{access::read} | bf::bitflags{access::write}) == 0x3);
+        STATIC_CHECK((access::write | bf::bitflags{access::read}) == std::uint8_t{0x3});
+        STATIC_CHECK((bf::bitflags{access::read} | access::write) == std::uint8_t{0x3});
+        STATIC_CHECK((bf::bitflags{access::read} | bf::bitflags{access::write}) == std::uint8_t{0x3});
 
-        STATIC_CHECK((access::write & bf::bitflags{access::read_write}) == 0x2);
-        STATIC_CHECK((bf::bitflags{access::read_write} & access::write) == 0x2);
-        STATIC_CHECK((bf::bitflags{access::read_write} & bf::bitflags{access::write}) == 0x2);
+        STATIC_CHECK((access::write & bf::bitflags{access::read_write}) == std::uint8_t{0x2});
+        STATIC_CHECK((bf::bitflags{access::read_write} & access::write) == std::uint8_t{0x2});
+        STATIC_CHECK((bf::bitflags{access::read_write} & bf::bitflags{access::write}) == std::uint8_t{0x2});
 
-        STATIC_CHECK((access::write ^ bf::bitflags{access::read_write}) == 0x1);
-        STATIC_CHECK((bf::bitflags{access::read_write} ^ access::write) == 0x1);
-        STATIC_CHECK((bf::bitflags{access::read_write} ^ bf::bitflags{access::write}) == 0x1);
+        STATIC_CHECK((access::write ^ bf::bitflags{access::read_write}) == std::uint8_t{0x1});
+        STATIC_CHECK((bf::bitflags{access::read_write} ^ access::write) == std::uint8_t{0x1});
+        STATIC_CHECK((bf::bitflags{access::read_write} ^ bf::bitflags{access::write}) == std::uint8_t{0x1});
 
         {
             bf::bitflags f{access::read};
             f |= access::write;
-            CHECK(f == 0x3);
+            CHECK(f == std::uint8_t{0x3});
         }
 
         {
             bf::bitflags f{access::read};
             f |= bf::bitflags{access::write};
-            CHECK(f == 0x3);
+            CHECK(f == std::uint8_t{0x3});
         }
 
         {
             bf::bitflags f{access::read_write};
             f &= access::write;
-            CHECK(f == 0x2);
+            CHECK(f == std::uint8_t{0x2});
         }
 
         {
             bf::bitflags f{access::read_write};
             f &= bf::bitflags{access::write};
-            CHECK(f == 0x2);
+            CHECK(f == std::uint8_t{0x2});
         }
 
         {
             bf::bitflags f{access::read_write};
             f ^= access::write;
-            CHECK(f == 0x1);
+            CHECK(f == std::uint8_t{0x1});
         }
 
         {
             bf::bitflags f{access::read_write};
             f ^= bf::bitflags{access::write};
-            CHECK(f == 0x1);
+            CHECK(f == std::uint8_t{0x1});
         }
     }
 
