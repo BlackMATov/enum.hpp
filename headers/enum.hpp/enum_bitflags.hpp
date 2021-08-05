@@ -58,7 +58,7 @@ namespace enum_hpp::bitflags
         constexpr bitflags& toggle(bitflags flags) noexcept {
             flags_ ^= flags.flags_;
             return *this;
-        };
+        }
 
         constexpr bitflags& clear(bitflags flags) noexcept {
             flags_ &= ~flags.flags_;

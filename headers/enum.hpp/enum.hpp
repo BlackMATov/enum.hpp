@@ -260,30 +260,28 @@ namespace enum_hpp::detail
             { ENUM_HPP_GENERATE_NAMES(Fields) }\
         };\
     public:\
-        static constexpr underlying_type to_underlying(enum_type e) noexcept {\
+        [[maybe_unused]] static constexpr underlying_type to_underlying(enum_type e) noexcept {\
             return static_cast<underlying_type>(e);\
         }\
-        \
-        static constexpr std::optional<std::string_view> to_string(enum_type e) noexcept {\
+        [[maybe_unused]] static constexpr std::optional<std::string_view> to_string(enum_type e) noexcept {\
             switch ( e ) {\
                 ENUM_HPP_GENERATE_VALUE_TO_NAME_CASES(Enum, Fields)\
                 default: return std::nullopt;\
             }\
         }\
-        static constexpr std::string_view to_string_or_empty(enum_type e) noexcept {\
+        [[maybe_unused]] static constexpr std::string_view to_string_or_empty(enum_type e) noexcept {\
             if ( auto s = to_string(e) ) {\
                 return *s;\
             }\
             return ::enum_hpp::empty_string;\
         }\
-        static std::string_view to_string_or_throw(enum_type e) {\
+        [[maybe_unused]] static std::string_view to_string_or_throw(enum_type e) {\
             if ( auto s = to_string(e) ) {\
                 return *s;\
             }\
             ::enum_hpp::detail::throw_exception_with(#Enum "_traits::to_string_or_throw(): invalid argument");\
         }\
-        \
-        static constexpr std::optional<enum_type> from_string(std::string_view name) noexcept {\
+        [[maybe_unused]] static constexpr std::optional<enum_type> from_string(std::string_view name) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( name == names[i] ) {\
                     return values[i];\
@@ -291,52 +289,49 @@ namespace enum_hpp::detail
             }\
             return std::nullopt;\
         }\
-        static constexpr enum_type from_string_or_default(std::string_view name, enum_type def) noexcept {\
+        [[maybe_unused]] static constexpr enum_type from_string_or_default(std::string_view name, enum_type def) noexcept {\
             if ( auto e = from_string(name) ) {\
                 return *e;\
             }\
             return def;\
         }\
-        static enum_type from_string_or_throw(std::string_view name) {\
+        [[maybe_unused]] static enum_type from_string_or_throw(std::string_view name) {\
             if ( auto e = from_string(name) ) {\
                 return *e;\
             }\
             ::enum_hpp::detail::throw_exception_with(#Enum "_traits::from_string_or_throw(): invalid argument");\
         }\
-        \
-        static constexpr std::optional<std::size_t> to_index(enum_type e) noexcept {\
+        [[maybe_unused]] static constexpr std::optional<std::size_t> to_index(enum_type e) noexcept {\
             switch ( e ) {\
                 ENUM_HPP_GENERATE_VALUE_TO_INDEX_CASES(Enum, Fields)\
                 default: return std::nullopt;\
             }\
         }\
-        \
-        static constexpr std::size_t to_index_or_invalid(enum_type e) noexcept {\
+        [[maybe_unused]] static constexpr std::size_t to_index_or_invalid(enum_type e) noexcept {\
             if ( auto i = to_index(e) ) {\
                 return *i;\
             }\
             return ::enum_hpp::invalid_index;\
         }\
-        static std::size_t to_index_or_throw(enum_type e) {\
+        [[maybe_unused]] static std::size_t to_index_or_throw(enum_type e) {\
             if ( auto i = to_index(e) ) {\
                 return *i;\
             }\
             ::enum_hpp::detail::throw_exception_with(#Enum "_traits::to_index_or_throw(): invalid argument");\
         }\
-        \
-        static constexpr std::optional<enum_type> from_index(std::size_t index) noexcept {\
+        [[maybe_unused]] static constexpr std::optional<enum_type> from_index(std::size_t index) noexcept {\
             if ( index < size ) {\
                 return values[index];\
             }\
             return std::nullopt;\
         }\
-        static constexpr enum_type from_index_or_default(std::size_t index, enum_type def) noexcept {\
+        [[maybe_unused]] static constexpr enum_type from_index_or_default(std::size_t index, enum_type def) noexcept {\
             if ( auto e = from_index(index) ) {\
                 return *e;\
             }\
             return def;\
         }\
-        static enum_type from_index_or_throw(std::size_t index) {\
+        [[maybe_unused]] static enum_type from_index_or_throw(std::size_t index) {\
             if ( auto e = from_index(index) ) {\
                 return *e;\
             }\
