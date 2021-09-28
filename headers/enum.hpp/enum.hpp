@@ -55,6 +55,11 @@ namespace enum_hpp
     }
 
     template < typename Enum >
+    constexpr const std::array<std::string_view, size<Enum>()>& value_names() noexcept {
+        return traits_t<Enum>::value_names;
+    }
+
+    template < typename Enum >
     constexpr typename traits_t<Enum>::underlying_type to_underlying(Enum e) noexcept {
         return traits_t<Enum>::to_underlying(e);
     }
@@ -75,6 +80,21 @@ namespace enum_hpp
     }
 
     template < typename Enum >
+    constexpr std::optional<std::string_view> to_value_string(Enum e) noexcept {
+        return traits_t<Enum>::to_value_string(e);
+    }
+
+    template < typename Enum >
+    constexpr std::string_view to_value_string_or_empty(Enum e) noexcept {
+        return traits_t<Enum>::to_value_string_or_empty(e);
+    }
+
+    template < typename Enum >
+    std::string_view to_value_string_or_throw(Enum e) {
+        return traits_t<Enum>::to_value_string_or_throw(e);
+    }
+
+    template < typename Enum >
     constexpr std::optional<Enum> from_string(std::string_view name) noexcept {
         return traits_t<Enum>::from_string(name);
     }
@@ -87,6 +107,21 @@ namespace enum_hpp
     template < typename Enum >
     Enum from_string_or_throw(std::string_view name) {
         return traits_t<Enum>::from_string_or_throw(name);
+    }
+
+    template < typename Enum >
+    constexpr std::optional<Enum> from_value_string(std::string_view name) noexcept {
+        return traits_t<Enum>::from_value_string(name);
+    }
+
+    template < typename Enum >
+    constexpr Enum from_value_string_or_default(std::string_view name, Enum def) noexcept {
+        return traits_t<Enum>::from_value_string_or_default(name, def);
+    }
+
+    template < typename Enum >
+    Enum from_value_string_or_throw(std::string_view name) {
+        return traits_t<Enum>::from_value_string_or_throw(name);
     }
 
     template < typename Enum >
@@ -144,26 +179,32 @@ namespace enum_hpp::detail
         }
     };
 
-    constexpr bool is_end_of_name(char ch) noexcept {
-        switch ( ch ) {
-            case ' ':
-            case '=':
-            case '\r':
-            case '\n':
-            case '\t':
-                return true;
-            default:
-                return false;
+    constexpr std::string_view trim_raw_name(std::string_view raw_name) noexcept {
+        // "none"                -> "none"
+        // "color = 1 << 0"      -> "color"
+        // "alpha = 1 << 1"      -> "alpha"
+        // "all = color | alpha" -> "all"
+
+        if ( const auto pos = raw_name.find_first_of(" =\f\n\r\t\v"); pos != std::string_view::npos ) {
+            return raw_name.substr(0, pos);
         }
+
+        return raw_name;
     }
 
-    constexpr std::string_view trim_raw_name(std::string_view raw_name) noexcept {
-        for ( std::size_t i = 0; i < raw_name.size(); ++i ) {
-            if ( is_end_of_name(raw_name[i]) ) {
-                return raw_name.substr(0, i);
+    constexpr std::string_view trim_raw_value_name(std::string_view raw_name) noexcept {
+        // "none"                -> ""
+        // "color = 1 << 0"      -> "1 << 0"
+        // "alpha = 1 << 1"      -> "1 << 1"
+        // "all = color | alpha" -> "color | alpha"
+
+        if ( auto pos = raw_name.find('='); pos != std::string_view::npos ) {
+            if ( pos = raw_name.find_first_not_of(" \f\n\r\t\v", pos + 1); pos != std::string_view::npos ) {
+                return raw_name.substr(pos);
             }
         }
-        return raw_name;
+
+        return std::string_view{};
     }
 }
 
@@ -198,6 +239,16 @@ namespace enum_hpp::detail
     ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_NAMES_OP, _, Fields)
 
 //
+// ENUM_HPP_GENERATE_VALUE_NAMES
+//
+
+#define ENUM_HPP_GENERATE_VALUE_NAMES_OP(d, i, x)\
+    ::enum_hpp::detail::trim_raw_value_name(ENUM_HPP_PP_STRINGIZE(x)),
+
+#define ENUM_HPP_GENERATE_VALUE_NAMES(Fields)\
+    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_VALUE_NAMES_OP, _, Fields)
+
+//
 // ENUM_HPP_GENERATE_VALUE_TO_NAME_CASES
 //
 
@@ -206,6 +257,16 @@ namespace enum_hpp::detail
 
 #define ENUM_HPP_GENERATE_VALUE_TO_NAME_CASES(Enum, Fields)\
     ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_VALUE_TO_NAME_CASES_OP, Enum, Fields)
+
+//
+// ENUM_HPP_GENERATE_VALUE_TO_VALUE_NAME_CASES
+//
+
+#define ENUM_HPP_GENERATE_VALUE_TO_VALUE_NAME_CASES_OP(Enum, i, x)\
+    case values[i]: return value_names[i];
+
+#define ENUM_HPP_GENERATE_VALUE_TO_VALUE_NAME_CASES(Enum, Fields)\
+    ENUM_HPP_PP_SEQ_FOR_EACH(ENUM_HPP_GENERATE_VALUE_TO_VALUE_NAME_CASES_OP, Enum, Fields)
 
 //
 // ENUM_HPP_GENERATE_VALUE_TO_INDEX_CASES
@@ -259,6 +320,9 @@ namespace enum_hpp::detail
         static constexpr const std::array<std::string_view, size> names = {\
             { ENUM_HPP_GENERATE_NAMES(Fields) }\
         };\
+        static constexpr const std::array<std::string_view, size> value_names = {\
+            { ENUM_HPP_GENERATE_VALUE_NAMES(Fields) }\
+        };\
     public:\
         [[maybe_unused]] static constexpr underlying_type to_underlying(enum_type e) noexcept {\
             return static_cast<underlying_type>(e);\
@@ -281,6 +345,24 @@ namespace enum_hpp::detail
             }\
             ::enum_hpp::detail::throw_exception_with(#Enum "_traits::to_string_or_throw(): invalid argument");\
         }\
+        [[maybe_unused]] static constexpr std::optional<std::string_view> to_value_string(enum_type e) noexcept {\
+            switch ( e ) {\
+                ENUM_HPP_GENERATE_VALUE_TO_VALUE_NAME_CASES(Enum, Fields)\
+                default: return std::nullopt;\
+            }\
+        }\
+        [[maybe_unused]] static constexpr std::string_view to_value_string_or_empty(enum_type e) noexcept {\
+            if ( auto s = to_value_string(e) ) {\
+                return *s;\
+            }\
+            return ::enum_hpp::empty_string;\
+        }\
+        [[maybe_unused]] static std::string_view to_value_string_or_throw(enum_type e) {\
+            if ( auto s = to_value_string(e) ) {\
+                return *s;\
+            }\
+            ::enum_hpp::detail::throw_exception_with(#Enum "_traits::to_value_string_or_throw(): invalid argument");\
+        }\
         [[maybe_unused]] static constexpr std::optional<enum_type> from_string(std::string_view name) noexcept {\
             for ( std::size_t i = 0; i < size; ++i) {\
                 if ( name == names[i] ) {\
@@ -300,6 +382,26 @@ namespace enum_hpp::detail
                 return *e;\
             }\
             ::enum_hpp::detail::throw_exception_with(#Enum "_traits::from_string_or_throw(): invalid argument");\
+        }\
+        [[maybe_unused]] static constexpr std::optional<enum_type> from_value_string(std::string_view value_name) noexcept {\
+            for ( std::size_t i = 0; i < size; ++i) {\
+                if ( value_name == value_names[i] ) {\
+                    return values[i];\
+                }\
+            }\
+            return std::nullopt;\
+        }\
+        [[maybe_unused]] static constexpr enum_type from_value_string_or_default(std::string_view value_name, enum_type def) noexcept {\
+            if ( auto e = from_value_string(value_name) ) {\
+                return *e;\
+            }\
+            return def;\
+        }\
+        [[maybe_unused]] static enum_type from_value_string_or_throw(std::string_view value_name) {\
+            if ( auto e = from_value_string(value_name) ) {\
+                return *e;\
+            }\
+            ::enum_hpp::detail::throw_exception_with(#Enum "_traits::from_value_string_or_throw(): invalid argument");\
         }\
         [[maybe_unused]] static constexpr std::optional<std::size_t> to_index(enum_type e) noexcept {\
             switch ( e ) {\

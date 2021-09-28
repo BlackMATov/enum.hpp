@@ -262,6 +262,63 @@ TEST_CASE("enum") {
         }
     }
 
+    SUBCASE("to_value_string") {
+        {
+            STATIC_CHECK(sn::color_traits::to_value_string(sn::color::red) == "2");
+            STATIC_CHECK(sn::color_traits::to_value_string(sn::color::green) == "");
+            STATIC_CHECK(sn::color_traits::to_value_string(sn::color::blue) == "red + 4");
+
+            STATIC_CHECK(sn::color_traits::to_value_string_or_empty(sn::color::red) == "2");
+            STATIC_CHECK(sn::color_traits::to_value_string_or_empty(sn::color::green) == "");
+            STATIC_CHECK(sn::color_traits::to_value_string_or_empty(sn::color::blue) == "red + 4");
+
+            CHECK(sn::color_traits::to_value_string_or_throw(sn::color::red) == "2");
+            CHECK(sn::color_traits::to_value_string_or_throw(sn::color::green) == "");
+            CHECK(sn::color_traits::to_value_string_or_throw(sn::color::blue) == "red + 4");
+
+            STATIC_CHECK_FALSE(sn::color_traits::to_value_string(sn::color(42)));
+            STATIC_CHECK(sn::color_traits::to_value_string_or_empty(sn::color(42)) == "");
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
+            CHECK_THROWS_AS(sn::color_traits::to_value_string_or_throw(sn::color(42)), enum_hpp::exception);
+        #endif
+
+            STATIC_CHECK(enum_hpp::to_value_string(sn::color::red) == "2");
+            STATIC_CHECK(enum_hpp::to_value_string(sn::color::green) == "");
+            STATIC_CHECK(enum_hpp::to_value_string(sn::color::blue) == "red + 4");
+
+            STATIC_CHECK(enum_hpp::to_value_string_or_empty(sn::color::red) == "2");
+            STATIC_CHECK(enum_hpp::to_value_string_or_empty(sn::color::green) == "");
+            STATIC_CHECK(enum_hpp::to_value_string_or_empty(sn::color::blue) == "red + 4");
+
+            CHECK(enum_hpp::to_value_string_or_throw(sn::color::red) == "2");
+            CHECK(enum_hpp::to_value_string_or_throw(sn::color::green) == "");
+            CHECK(enum_hpp::to_value_string_or_throw(sn::color::blue) == "red + 4");
+
+            STATIC_CHECK_FALSE(enum_hpp::to_value_string(sn::color(42)));
+            STATIC_CHECK(enum_hpp::to_value_string_or_empty(sn::color(42)) == "");
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
+            CHECK_THROWS_AS(enum_hpp::to_value_string_or_throw(sn::color(42)), enum_hpp::exception);
+        #endif
+        }
+
+        {
+            STATIC_CHECK(sn::render::mask_traits::to_value_string(sn::render::mask::none) == "");
+            STATIC_CHECK(sn::render::mask_traits::to_value_string(sn::render::mask::color) == "1 << 0");
+            STATIC_CHECK(sn::render::mask_traits::to_value_string(sn::render::mask::alpha) == "1 << 1");
+            STATIC_CHECK(sn::render::mask_traits::to_value_string(sn::render::mask::all) == "color | alpha");
+
+            STATIC_CHECK(sn::render::mask_traits::to_value_string_or_empty(sn::render::mask::none) == "");
+            STATIC_CHECK(sn::render::mask_traits::to_value_string_or_empty(sn::render::mask::color) == "1 << 0");
+            STATIC_CHECK(sn::render::mask_traits::to_value_string_or_empty(sn::render::mask::alpha) == "1 << 1");
+            STATIC_CHECK(sn::render::mask_traits::to_value_string_or_empty(sn::render::mask::all) == "color | alpha");
+
+            CHECK(sn::render::mask_traits::to_value_string_or_throw(sn::render::mask::none) == "");
+            CHECK(sn::render::mask_traits::to_value_string_or_throw(sn::render::mask::color) == "1 << 0");
+            CHECK(sn::render::mask_traits::to_value_string_or_throw(sn::render::mask::alpha) == "1 << 1");
+            CHECK(sn::render::mask_traits::to_value_string_or_throw(sn::render::mask::all) == "color | alpha");
+        }
+    }
+
     SUBCASE("from_string") {
         {
             STATIC_CHECK(sn::color_traits::from_string("red") == sn::color::red);
@@ -304,6 +361,46 @@ TEST_CASE("enum") {
             STATIC_CHECK(enum_hpp::from_string<sn::numbers>("_10") == sn::_10);
             STATIC_CHECK(enum_hpp::from_string<sn::numbers>("_240") == sn::_240);
             STATIC_CHECK_FALSE(enum_hpp::from_string<sn::numbers>("error"));
+        }
+    }
+
+    SUBCASE("from_value_string") {
+        {
+            STATIC_CHECK(sn::render::mask_traits::from_value_string("") == sn::render::mask::none);
+            STATIC_CHECK(sn::render::mask_traits::from_value_string("1 << 0") == sn::render::mask::color);
+            STATIC_CHECK(sn::render::mask_traits::from_value_string("1 << 1") == sn::render::mask::alpha);
+            STATIC_CHECK(sn::render::mask_traits::from_value_string("color | alpha") == sn::render::mask::all);
+
+            STATIC_CHECK(sn::color_traits::from_value_string_or_default("2", sn::color::green) == sn::color::red);
+            STATIC_CHECK(sn::color_traits::from_value_string_or_default("", sn::color::red) == sn::color::green);
+            STATIC_CHECK(sn::color_traits::from_value_string_or_default("red + 4", sn::color::red) == sn::color::blue);
+
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
+            CHECK(sn::color_traits::from_value_string_or_throw("2") == sn::color::red);
+            CHECK(sn::color_traits::from_value_string_or_throw("") == sn::color::green);
+            CHECK(sn::color_traits::from_value_string_or_throw("red + 4") == sn::color::blue);
+        #endif
+
+            STATIC_CHECK_FALSE(sn::color_traits::from_value_string("42"));
+            STATIC_CHECK(sn::color_traits::from_value_string_or_default("42", sn::color::red) == sn::color::red);
+        #ifndef ENUM_HPP_NO_EXCEPTIONS
+            CHECK_THROWS_AS(sn::color_traits::from_value_string_or_throw("42"), enum_hpp::exception);
+        #endif
+        }
+        {
+            STATIC_CHECK(enum_hpp::from_value_string<sn::render::mask>("") == sn::render::mask::none);
+            STATIC_CHECK(enum_hpp::from_value_string<sn::render::mask>("1 << 0") == sn::render::mask::color);
+            STATIC_CHECK(enum_hpp::from_value_string<sn::render::mask>("1 << 1") == sn::render::mask::alpha);
+            STATIC_CHECK(enum_hpp::from_value_string<sn::render::mask>("color | alpha") == sn::render::mask::all);
+            STATIC_CHECK_FALSE(enum_hpp::from_value_string<sn::render::mask>("42"));
+
+            STATIC_CHECK(enum_hpp::from_value_string_or_default("2", sn::color::green) == sn::color::red);
+            STATIC_CHECK(enum_hpp::from_value_string_or_default("", sn::color::red) == sn::color::green);
+            STATIC_CHECK(enum_hpp::from_value_string_or_default("red + 4", sn::color::red) == sn::color::blue);
+
+            CHECK(enum_hpp::from_value_string_or_throw<sn::color>("2") == sn::color::red);
+            CHECK(enum_hpp::from_value_string_or_throw<sn::color>("") == sn::color::green);
+            CHECK(enum_hpp::from_value_string_or_throw<sn::color>("red + 4") == sn::color::blue);
         }
     }
 
