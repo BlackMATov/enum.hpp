@@ -22,12 +22,11 @@ target_compile_options(${PROJECT_NAME}
         -Wno-old-style-cast
         -Wno-shadow
         -Wno-unknown-warning-option
-        -Wno-weak-vtables>)
+        -Wno-unused-macros
+        -Wno-weak-vtables
+        >)
 
 if(BUILD_AS_STANDALONE)
-    option(BUILD_WITH_UNTESTS "Build with unit tests" ON)
-    if(BUILD_WITH_UNTESTS)
-        enable_testing()
-        add_subdirectory(untests)
-    endif()
+    enable_testing()
+    add_subdirectory(untests)
 endif()
