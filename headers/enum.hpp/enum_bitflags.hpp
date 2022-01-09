@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of the "https://github.com/blackmatov/enum.hpp"
  * For conditions of distribution and use, see copyright notice in LICENSE.md
- * Copyright (C) 2019-2021, by Matvey Cherevko (blackmatov@gmail.com)
+ * Copyright (C) 2019-2022, by Matvey Cherevko (blackmatov@gmail.com)
  ******************************************************************************/
 
 #pragma once
@@ -22,6 +22,9 @@ namespace enum_hpp::bitflags
         bitflags() = default;
         bitflags(const bitflags&) = default;
         bitflags& operator=(const bitflags&) = default;
+        bitflags(bitflags&&) noexcept = default;
+        bitflags& operator=(bitflags&&) noexcept = default;
+        ~bitflags() = default;
 
         constexpr bitflags(enum_type flags)
         : flags_(static_cast<underlying_type>(flags)) {}
