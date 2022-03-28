@@ -337,44 +337,44 @@ TEST_CASE("enum_bitflags") {
     }
 
     SUBCASE("any_of") {
-        STATIC_CHECK(bf::any_of(access::none, access::none));
+        STATIC_CHECK_FALSE(bf::any_of(access::none, access::none));
         STATIC_CHECK_FALSE(bf::any_of(access::none, access::read));
         STATIC_CHECK_FALSE(bf::any_of(access::none, access::write));
         STATIC_CHECK_FALSE(bf::any_of(access::none, access::read_write));
 
-        STATIC_CHECK(bf::any_of(access::read, access::none));
+        STATIC_CHECK_FALSE(bf::any_of(access::read, access::none));
         STATIC_CHECK(bf::any_of(access::read, access::read));
         STATIC_CHECK_FALSE(bf::any_of(access::read, access::write));
         STATIC_CHECK(bf::any_of(access::read, access::read_write));
 
-        STATIC_CHECK(bf::any_of(access::write, access::none));
+        STATIC_CHECK_FALSE(bf::any_of(access::write, access::none));
         STATIC_CHECK_FALSE(bf::any_of(access::write, access::read));
         STATIC_CHECK(bf::any_of(access::write, access::write));
         STATIC_CHECK(bf::any_of(access::write, access::read_write));
 
-        STATIC_CHECK(bf::any_of(access::read_write, access::none));
+        STATIC_CHECK_FALSE(bf::any_of(access::read_write, access::none));
         STATIC_CHECK(bf::any_of(access::read_write, access::read));
         STATIC_CHECK(bf::any_of(access::read_write, access::write));
         STATIC_CHECK(bf::any_of(access::read_write, access::read_write));
     }
 
     SUBCASE("none_of") {
-        STATIC_CHECK_FALSE(bf::none_of(access::none, access::none));
+        STATIC_CHECK(bf::none_of(access::none, access::none));
         STATIC_CHECK(bf::none_of(access::none, access::read));
         STATIC_CHECK(bf::none_of(access::none, access::write));
         STATIC_CHECK(bf::none_of(access::none, access::read_write));
 
-        STATIC_CHECK_FALSE(bf::none_of(access::read, access::none));
+        STATIC_CHECK(bf::none_of(access::read, access::none));
         STATIC_CHECK_FALSE(bf::none_of(access::read, access::read));
         STATIC_CHECK(bf::none_of(access::read, access::write));
         STATIC_CHECK_FALSE(bf::none_of(access::read, access::read_write));
 
-        STATIC_CHECK_FALSE(bf::none_of(access::write, access::none));
+        STATIC_CHECK(bf::none_of(access::write, access::none));
         STATIC_CHECK(bf::none_of(access::write, access::read));
         STATIC_CHECK_FALSE(bf::none_of(access::write, access::write));
         STATIC_CHECK_FALSE(bf::none_of(access::write, access::read_write));
 
-        STATIC_CHECK_FALSE(bf::none_of(access::read_write, access::none));
+        STATIC_CHECK(bf::none_of(access::read_write, access::none));
         STATIC_CHECK_FALSE(bf::none_of(access::read_write, access::read));
         STATIC_CHECK_FALSE(bf::none_of(access::read_write, access::write));
         STATIC_CHECK_FALSE(bf::none_of(access::read_write, access::read_write));

@@ -232,8 +232,7 @@ namespace enum_hpp::bitflags
 
     template < typename Enum >
     constexpr bool any_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept {
-        return mask.as_raw() == 0
-            || (flags.as_raw() & mask.as_raw()) != 0;
+        return 0 != (flags.as_raw() & mask.as_raw());
     }
 
     //
@@ -258,8 +257,7 @@ namespace enum_hpp::bitflags
 
     template < typename Enum >
     constexpr bool none_of(bitflags<Enum> flags, bitflags<Enum> mask) noexcept {
-        return mask.as_raw() != 0
-            && (flags.as_raw() & mask.as_raw()) == 0;
+        return 0 == (flags.as_raw() & mask.as_raw());
     }
 
     //
