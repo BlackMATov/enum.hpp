@@ -56,7 +56,7 @@ Also, you can add the root repository directory to your [cmake](https://cmake.or
 
 ```cmake
 add_subdirectory(external/enum.hpp)
-target_link_libraries(your_project_target enum.hpp)
+target_link_libraries(your_project_target PUBLIC enum.hpp)
 ```
 
 ## Examples
