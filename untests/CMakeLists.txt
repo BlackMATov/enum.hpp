@@ -18,7 +18,7 @@ endif()
 
 file(GLOB_RECURSE UNTESTS_SOURCES "*.cpp" "*.hpp")
 add_executable(${PROJECT_NAME} ${UNTESTS_SOURCES})
-target_link_libraries(${PROJECT_NAME} enum.hpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC enum.hpp)
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE
