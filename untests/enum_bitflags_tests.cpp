@@ -6,7 +6,7 @@
 
 #include <enum.hpp/enum_bitflags.hpp>
 
-#include "doctest/doctest.hpp"
+#include "enum_tests.hpp"
 
 #include <cstdint>
 #include <type_traits>
