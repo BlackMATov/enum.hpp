@@ -1,5 +1,4 @@
-# 3.8 version is required for `cxx_std_17`
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 if(NOT DEFINED PROJECT_NAME)
     set(BUILD_AS_STANDALONE ON)
@@ -13,20 +12,25 @@ add_library(${PROJECT_NAME} INTERFACE)
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 target_include_directories(${PROJECT_NAME} INTERFACE headers)
 
-target_compile_options(${PROJECT_NAME}
-    INTERFACE
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-        -Wno-c++98-compat-pedantic
-        -Wno-covered-switch-default
-        -Wno-ctad-maybe-unsupported
-        -Wno-old-style-cast
-        -Wno-shadow
-        -Wno-unknown-warning-option
-        -Wno-unused-macros
-        -Wno-weak-vtables
-        >)
+#
+# BUILD_AS_STANDALONE
+#
 
-if(BUILD_AS_STANDALONE)
-    enable_testing()
-    add_subdirectory(untests)
+if(NOT ${BUILD_AS_STANDALONE})
+    return()
 endif()
+
+option(BUILD_WITH_COVERAGE "Build with coverage" OFF)
+option(BUILD_WITH_SANITIZERS "Build with sanitizers" OFF)
+
+enable_testing()
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(EnableASan)
+include(EnableGCov)
+include(EnableUBSan)
+
+add_subdirectory(vendors)
+add_subdirectory(untests)

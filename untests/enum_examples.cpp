@@ -6,7 +6,7 @@
 
 #include <enum.hpp/enum.hpp>
 
-#include "doctest/doctest.hpp"
+#include "enum_tests.hpp"
 
 #include <string>
 #include <iostream>
