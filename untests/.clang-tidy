@@ -1,16 +1,17 @@
 ---
 Checks: '-*,
 
+        bugprone-*,
+        -bugprone-easily-swappable-parameters,
+
         clang-analyzer-*,
 
         concurrency-*,
 
-        cppcoreguidelines-*,
-        -cppcoreguidelines-avoid-magic-numbers,
-        -cppcoreguidelines-macro-usage,
-        -cppcoreguidelines-pro-bounds-constant-array-index,
-
         modernize-*,
+        -modernize-avoid-c-arrays,
+        -modernize-use-auto,
+        -modernize-use-nodiscard,
         -modernize-use-trailing-return-type,
 
         portability-*,
