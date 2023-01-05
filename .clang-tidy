@@ -10,6 +10,7 @@ Checks: '-*,
         -cppcoreguidelines-pro-bounds-constant-array-index,
 
         modernize-*,
+        -modernize-macro-to-enum,
         -modernize-use-trailing-return-type,
 
         performance-*,
@@ -17,5 +18,6 @@ Checks: '-*,
         portability-*,
 
         readability-*,
+        -readability-identifier-length,
         '
 ...
